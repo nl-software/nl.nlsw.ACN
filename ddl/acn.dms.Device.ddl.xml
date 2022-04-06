@@ -1,0 +1,329 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <device xml:id="acn.dms.Device" date="2021-06-03" UUID="b547e8d5-cfbe-4592-8b8e-97d6beb3bd91" provider="http://www.esta.org/ddl/draft/">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="d06332cc-d4e1-4018-ac83-3fba91c34c83" name="acn.dms.lset" />
+    <UUIDname UUID="b547e8d5-cfbe-4592-8b8e-97d6beb3bd91" name="acn.dms.Device" />
+    <parameter name="DeviceName">
+    	<label>The default value of the device Name.</label>
+    </parameter>
+    <parameter name="ProductName">
+    	<label>The value of the ProductName.</label>
+    </parameter>
+    <parameter name="ProductNumber">
+    	<label>The value of the ProductNumber.</label>
+    </parameter>
+    <label set="acn.dms.lset" key="device" />
+    <useprotocol name="DMS" />
+
+    <property xml:id="ANullProperty" valuetype="NULL">
+      <label>A property with no value</label>
+    </property>
+    <property xml:id="AnImpliedProperty" valuetype="implied">
+      <label>A property with a value that is not accessible</label>
+    </property>
+    <property xml:id="AnImmediateStringProperty" valuetype="immediate">
+      <label>A property with a string value in the description</label>
+      <value type="string">The (immediate) string value</value>
+    </property>
+    <property xml:id="AnImmediateFloatProperty" valuetype="immediate">
+      <label>A property with a floating point value in the description</label>
+      <value type="string">The (immediate) floating point value</value>
+      <value type="float">3.1415926535</value>
+    </property>
+    <property xml:id="AnImmediateSignedIntegerProperty" valuetype="immediate">
+      <label>A property with a signed integer value in the description</label>
+      <value type="string">The (immediate) signed integer value</value>
+      <value type="sint">-32767</value>
+    </property>
+    <property xml:id="AnImmediateUnsignedIntegerProperty" valuetype="immediate">
+      <label>A property with an unsigned integer value in the description</label>
+      <value type="string">The (immediate) unsigned integer value</value>
+      <value type="uint">65535</value>
+    </property>
+    <property xml:id="AShareDefineProperty" valuetype="implied" sharedefine="true">
+      <label>The defining-declaration of a shared property. It is referenced elsewhere with a ddl:propertypointer.</label>
+    </property>
+    <property xml:id="AnArrayCommonProperty" valuetype="implied" sharedefine="arraycommon">
+      <label>The defining-declaration of a shared property in all branches of an array. This property cannot be an array.</label>
+    </property>
+    <property xml:id="Constants" valuetype="network" array="8">
+      <label>Known constants</label>
+      <behavior set="acn.dms.bset" name="knownConstant"/>
+      <protocol name="DMS"/>
+	  <property xml:id="Constants.Default" valuetype="immediate">
+		<behavior set="acnbase.bset" name="initializer"/>
+		<value type="uint">0x0000</value>
+		<value type="uint">0x3FFF</value>
+		<value type="uint">0x4000</value>
+		<value type="uint">0x5555</value>
+		<value type="uint">0x7FFF</value>
+		<value type="uint">0x8000</value>
+		<value type="uint">0xAAAA</value>
+		<value type="uint">0xFFFF</value>
+	  </property>
+    </property>
+    <property xml:id="Constants2" valuetype="network" array="8">
+      <label>Known constants</label>
+      <behavior set="acn.dms.bset" name="knownConstant"/>
+      <protocol name="DMS"/>
+		<value type="uint">0x0000</value>
+		<value type="uint">0x3FFF</value>
+		<value type="uint">0x4000</value>
+		<value type="uint">0x5555</value>
+		<value type="uint">0x7FFF</value>
+		<value type="uint">0x8000</value>
+		<value type="uint">0xAAAA</value>
+		<value type="uint">0xFFFF</value>
+    </property>
+    <property xml:id="Name" valuetype="network">
+      <label>Device Name</label>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <behavior set="acn.dms.bset" name="setAtCommissioning"/>
+      <protocol name="DMS"/>
+      <property xml:id="Name.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">64</value>
+      </property>
+      <property xml:id="Name.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string" value.paramname="DeviceName"/>
+      </property>
+    </property>
+    <property xml:id="ProductName" valuetype="network">
+      <label>Product Name</label>
+      <behavior set="acnbase.bset" name="devModelName"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="ProductName.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">64</value>
+      </property>
+      <property xml:id="ProductName.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string" value.paramname="ProductName">Product</value>
+      </property>
+    </property>
+    <property xml:id="ProductNumber" valuetype="network">
+      <label>Product Number</label>
+      <behavior set="acn.dms.bset" name="ProductNumber"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="ProductNumber.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">32</value>
+      </property>
+      <property xml:id="ProductNumber.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string" value.paramname="ProductNumber">1</value>
+      </property>
+    </property>
+    <property xml:id="SerialNumber" valuetype="network">
+      <label>The device serial number</label>
+      <behavior set="acn.dms.bset" name="devSerialNumber"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <behavior set="acn.dms.bset" name="setAtFactory"/>
+      <protocol name="DMS"/>
+      <property xml:id="SerialNumber.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">16</value>
+      </property>
+      <property xml:id="SerialNumber.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">1</value>
+      </property>
+    </property>
+	<property xml:id="Manufacturer" valuetype="network">
+      <label>Manufacturer</label>
+      <behavior set="acnbase.bset" name="manufacturer"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="Manufacturer.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">64</value>
+      </property>
+      <property xml:id="Manufacturer.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">Entertainment Services and Technology Association</value>
+      </property>
+    </property>
+    <property xml:id="ManufacturerURL" valuetype="network">
+      <label>Manufacturer URL</label>
+      <behavior set="acnbase.bset" name="manufacturerURL"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="ManufacturerURL.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">64</value>
+      </property>
+      <property xml:id="ManufacturerURL.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">https://www.esta.org/</value>
+      </property>
+    </property>
+    <property xml:id="ManufactureDate" valuetype="network">
+      <label>Manufacture Date</label>
+      <behavior set="acn.dms.bset" name="date.manufacture"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <behavior set="acn.dms.bset" name="setAtFactory"/>
+      <protocol name="DMS"/>
+      <property xml:id="ManufactureDate.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">16</value>
+      </property>
+      <property xml:id="ManufactureDate.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">2014-02-18</value>
+      </property>
+    </property>
+    <property xml:id="HardwareVersion" valuetype="network">
+      <label>Hardware Version</label>
+      <behavior set="acnbase.bset" name="hardwareVersion"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="HardwareVersion.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">16</value>
+      </property>
+      <property xml:id="HardwareVersion.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">1.0</value>
+      </property>
+    </property>
+    <property xml:id="SoftwareVersion" valuetype="network">
+      <label>Software Version</label>
+      <behavior set="acnbase.bset" name="softwareVersion"/>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="SoftwareVersion.MaxCodeUnits" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="limitMaxCodeUnits" />
+        <value type="uint">16</value>
+      </property>
+      <property xml:id="SoftwareVersion.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">1.0</value>
+      </property>
+    </property>
+
+    <property xml:id="ABoolean" valuetype="network">
+      <label>A Boolean</label>
+      <behavior set="acn.dms.bset" name="type.boolean"/>
+      <protocol name="DMS"/>
+      <property xml:id="ABoolean.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">false</value>
+      </property>
+    </property>
+    <property xml:id="AChar" valuetype="network">
+      <label>A Char</label>
+      <behavior set="acn.dms.bset" name="type.char"/>
+      <protocol name="DMS"/>
+      <property xml:id="AChar.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">C</value>
+      </property>
+    </property>
+    <property xml:id="AString" valuetype="network">
+      <label>A String</label>
+      <behavior set="acn.dms.bset" name="type.string"/>
+      <protocol name="DMS"/>
+      <property xml:id="AString.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="string">string</value>
+      </property>
+    </property>
+    <property xml:id="AFloat32" valuetype="network">
+      <label>A Float32</label>
+      <behavior set="acn.dms.bset" name="type.float32"/>
+      <protocol name="DMS"/>
+      <property xml:id="AFloat32.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="float">3.14159265358979323846</value>
+      </property>
+    </property>
+    <property xml:id="AFloat64" valuetype="network">
+      <label>A Float64</label>
+      <behavior set="acn.dms.bset" name="type.float64"/>
+      <protocol name="DMS"/>
+      <property xml:id="AFloat64.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="float">3.14159265358979323846</value>
+      </property>
+    </property>
+    <property xml:id="AnInt8" valuetype="network">
+      <label>An Int8</label>
+      <behavior set="acn.dms.bset" name="type.int8"/>
+      <protocol name="DMS"/>
+      <property xml:id="AnInt8.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="sint">127</value>
+      </property>
+    </property>
+    <property xml:id="AnInt16" valuetype="network">
+      <label>An Int16</label>
+      <behavior set="acn.dms.bset" name="type.int16"/>
+      <protocol name="DMS"/>
+      <property xml:id="AnInt16.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="sint">32767</value>
+      </property>
+    </property>
+    <property xml:id="AnInt32" valuetype="network">
+      <label>An Int32</label>
+      <behavior set="acn.dms.bset" name="type.int32"/>
+      <protocol name="DMS"/>
+      <property xml:id="AnInt32.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="sint">2147483647</value>
+      </property>
+    </property>
+    <property xml:id="AnInt64" valuetype="network">
+      <label>An Int64</label>
+      <behavior set="acn.dms.bset" name="type.int64"/>
+      <protocol name="DMS"/>
+      <property xml:id="AnInt64.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="sint">9223372036854775807</value>
+      </property>
+    </property>
+
+    <property xml:id="AUInt8" valuetype="network">
+      <label>A UInt8</label>
+      <behavior set="acn.dms.bset" name="type.uint8"/>
+      <protocol name="DMS"/>
+      <property xml:id="AUInt8.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="uint">255</value>
+      </property>
+    </property>
+    <property xml:id="AUInt16" valuetype="network">
+      <label>An Int16</label>
+      <behavior set="acn.dms.bset" name="type.uint16"/>
+      <protocol name="DMS"/>
+      <property xml:id="AUInt16.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="uint">65536</value>
+      </property>
+    </property>
+    <property xml:id="AUInt32" valuetype="network">
+      <label>An Int32</label>
+      <behavior set="acn.dms.bset" name="type.uint32"/>
+      <protocol name="DMS"/>
+      <property xml:id="AUInt32.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="uint">4294967295</value>
+      </property>
+    </property>
+    <property xml:id="AUInt64" valuetype="network">
+      <label>An Int64</label>
+      <behavior set="acn.dms.bset" name="type.uint64"/>
+      <protocol name="DMS"/>
+      <property xml:id="AUInt64.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer"/>
+        <value type="uint">18446744073709551615</value>
+      </property>
+    </property>
+	</device>
+</DDL>

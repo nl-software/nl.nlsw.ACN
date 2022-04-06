@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <device xml:id="CANopen.404" date="2020-09-11" UUID="cac76fb4-eb02-4bd4-806a-74f5e2c963d8" provider="http://www.can-cia.org">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset"/>
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset"/>
+    <UUIDname UUID="cac76fb4-eb02-4bd4-806a-74f5e2c963d8" name="CANopen.404"/>
+    <label set="CANopen.lset" key="CANopen.404"/>
+    <useprotocol name="CANopen"/>
+
+  </device>
+</DDL>

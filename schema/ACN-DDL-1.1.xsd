@@ -1,0 +1,427 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema xmlns="http://www.esta.org/acn/namespace/ddl/2008/" elementFormDefault="qualified"
+targetNamespace="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://www.w3.org/XML/1998/namespace" />
+  <xs:import namespace="http://www.w3.org/1999/xhtml" />
+  <xs:annotation>
+    <xs:documentation xml:lang="en">
+      Definition of Architecture for Communicating Networks Device Description Language 1.1 (ANSI E1.17:2015)
+      Created from the ACN-DDL-1.1.dtd by Ernst van der Pols.
+	  - In (immediate) property the order of value and protocol changed to reflect the specification text.
+      @date 2021-06-09
+    </xs:documentation>
+  </xs:annotation>
+  <xs:simpleType name="UniversallyUniqueIdentifier">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:pattern value="[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="IdentifiedNode" abstract="true">
+    <xs:attribute ref="xml:id" />
+  </xs:complexType>
+  <xs:complexType name="LabeledElement" abstract="true">
+    <xs:complexContent mixed="false">
+      <xs:extension base="IdentifiedNode">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" ref="label" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="LabeledArrayElement">
+    <xs:complexContent>
+      <xs:extension base="LabeledElement">
+        <xs:attribute name="array" type="xs:string" />
+        <!--xs:attribute name="array" type="xs:unsignedInt" default="1"/-->
+        <xs:attribute name="array.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="IdentifiedLeafNode">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute ref="xml:id" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="BehaviorReference">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:attribute name="set" type="xs:NMTOKEN" use="required" />
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Behavior">
+    <xs:complexContent>
+      <xs:extension base="BehaviorReference">
+        <xs:attribute name="set.paramname" type="xs:NCName" />
+        <xs:attribute name="name.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="BehaviorDefinition">
+    <xs:complexContent>
+      <xs:extension base="LabeledElement">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="refines" />
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="section" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="BehaviorSet">
+    <xs:complexContent>
+      <xs:extension base="ConcreteModule">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="behaviordef" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Device">
+    <xs:complexContent>
+      <xs:extension base="Module">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="useprotocol" />
+          <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element ref="property" />
+            <xs:element ref="propertypointer" />
+            <xs:element ref="includedev" />
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="DDLDocument">
+    <xs:annotation>
+      <xs:documentation>DDL is the root element of all DDL documents. A DDL document shall fit the XML “document” production.
+      The single root element shall be DDL. This type does not extent IdentifiedNode to allow inheriting from an arbitrary
+      base type in the application.</xs:documentation>
+    </xs:annotation>
+    <xs:sequence>
+      <xs:choice>
+        <xs:element ref="behaviorset" />
+        <xs:element ref="device" />
+        <xs:element ref="languageset" />
+      </xs:choice>
+    </xs:sequence>
+    <xs:attribute name="version" use="required">
+      <xs:simpleType>
+        <xs:restriction base="xs:NMTOKEN">
+          <!--xs:enumeration value="1.1" /-->
+          <xs:pattern value="1\.1" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute ref="xml:id" />
+  </xs:complexType>
+  <xs:complexType name="IncludeDevice">
+    <xs:complexContent>
+      <xs:extension base="LabeledArrayElement">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="protocol" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="setparam" />
+        </xs:sequence>
+        <xs:attribute name="UUID" type="xs:NMTOKEN" use="required" />
+        <xs:attribute name="UUID.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Label">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="label.paramname" type="xs:NCName" />
+        <xs:attribute name="set" type="xs:NMTOKEN" />
+        <xs:attribute name="set.paramname" type="xs:NCName" />
+        <xs:attribute name="key" type="xs:NCName" />
+        <xs:attribute name="key.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="Language">
+    <xs:complexContent>
+      <xs:extension base="LabeledElement">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="string" />
+        </xs:sequence>
+        <xs:attribute name="lang" type="xs:string" use="required" />
+        <xs:attribute name="altlang" type="xs:string" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="LanguageSet">
+    <xs:complexContent>
+      <xs:extension base="ConcreteModule">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="language" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="MaxInclusive">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="maxinclusive.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="MinInclusive">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="mininclusive.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="Module" abstract="true">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="UUIDname" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="parameter" />
+          <xs:element minOccurs="0" maxOccurs="1" ref="label" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="alternatefor" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="extends" />
+        </xs:sequence>
+        <xs:attribute name="UUID" type="UniversallyUniqueIdentifier" use="required" />
+        <xs:attribute name="provider" type="xs:string" use="required" />
+        <xs:attribute name="date" type="xs:NMTOKEN" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ConcreteModule" abstract="true">
+    <xs:complexContent>
+      <xs:restriction base="Module">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="0" ref="parameter" />
+        </xs:sequence>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ModuleReference">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:attribute name="UUID" type="xs:NMTOKEN" use="required" />
+        <xs:attribute name="UUID.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Paragraph">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute ref="xml:space" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="Parameter">
+    <xs:complexContent>
+      <xs:extension base="LabeledElement">
+        <xs:sequence>
+          <xs:choice>
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="choice" />
+            <xs:element minOccurs="0" maxOccurs="unbounded" ref="refinement" />
+            <xs:sequence>
+              <xs:element minOccurs="0" maxOccurs="1" ref="mininclusive" />
+              <xs:element minOccurs="0" maxOccurs="1" ref="maxinclusive" />
+            </xs:sequence>
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="ParameterChoice">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="choice.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="ParameterRefinement">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="refinement.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="Property">
+    <xs:complexContent>
+      <xs:extension base="LabeledArrayElement">
+        <xs:sequence>
+          <xs:element minOccurs="1" maxOccurs="unbounded" ref="behavior" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="protocol" />
+          <xs:element minOccurs="0" maxOccurs="unbounded" ref="value" />
+          <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element ref="property" />
+            <xs:element ref="propertypointer" />
+            <xs:element ref="includedev" />
+          </xs:choice>
+        </xs:sequence>
+        <xs:attribute name="valuetype" type="PropertyValueType" use="required"/>
+        <xs:attribute name="valuetype.paramname" type="xs:NCName" />
+        <xs:attribute default="false" name="sharedefine" type="PropertyShareDefine"/>
+        <xs:attribute name="sharedefine.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="PropertyPointer">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:attribute name="ref" type="xs:string" use="required" />
+        <xs:attribute name="ref.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:simpleType name="PropertyShareDefine">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="false" />
+      <xs:enumeration value="true" />
+      <xs:enumeration value="arraycommon" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:simpleType name="PropertyValueType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="NULL">
+        <xs:annotation>
+          <xs:documentation>The Property has no value.
+          The childnodes are label?, behavior+, protocol*, (property|includedev|propertypointer)*
+          @symbol U+2400 ␀ NULL
+          @symbol U+26B2 ⚲ NEUTER
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="immediate">
+        <xs:annotation>
+          <xs:documentation>The Property value is in the description.
+          The childnodes are label?, behavior+, value+, protocol*, (property|includedev|propertypointer)*
+          @symbol U+1F3AF DIRECT HIT
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="implied">
+        <xs:annotation>
+          <xs:documentation>The Property value is implied (calculated internally, not available on the network, nor in the description).
+          The childnodes are label?, behavior+, protocol*, (property|includedev|propertypointer)*
+          @symbol U+1F52E CRYSTAL BAL
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+      <xs:enumeration value="network">
+        <xs:annotation>
+          <xs:documentation>The Property value is available on the network.
+          The childnodes are label?, behavior+, protocol*, (property|includedev|propertypointer)*
+          @symbol U+1F5A7 THREE NETWORKED COMPUTERS
+          </xs:documentation>
+        </xs:annotation>
+      </xs:enumeration>
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="Protocol">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:sequence>
+          <xs:any minOccurs="0" maxOccurs="unbounded" namespace="##any" />
+        </xs:sequence>
+        <xs:attribute name="name" type="xs:string" use="required" />
+        <xs:attribute name="name.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Refines">
+    <xs:complexContent>
+      <xs:extension base="BehaviorReference"/>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Section">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:sequence>
+          <xs:element minOccurs="0" maxOccurs="1" ref="hd" />
+          <xs:choice minOccurs="1" maxOccurs="unbounded">
+            <xs:element ref="section" />
+            <xs:element ref="p" />
+            <xs:any minOccurs="0" maxOccurs="unbounded" processContents="lax" namespace="http://www.w3.org/1999/xhtml" />
+          </xs:choice>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="SetParameter">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+        <xs:attribute name="setparam.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="String">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="key" type="xs:NCName" use="required" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:complexType name="UseProtocol">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+        <xs:attribute name="name.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="UUIDName">
+    <xs:complexContent>
+      <xs:extension base="IdentifiedNode">
+        <xs:attribute name="UUID" type="UniversallyUniqueIdentifier" use="required" />
+        <xs:attribute name="name" type="xs:NCName" use="required" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="Value">
+    <xs:simpleContent>
+      <xs:extension base="IdentifiedLeafNode">
+        <xs:attribute name="value.paramname" type="xs:NCName" />
+        <xs:attribute name="type" type="ValueDataType" use="required" />
+        <xs:attribute name="type.paramname" type="xs:NCName" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+  <xs:simpleType name="ValueDataType">
+    <xs:restriction base="xs:NMTOKEN">
+      <xs:enumeration value="uint" />
+      <xs:enumeration value="sint" />
+      <xs:enumeration value="float" />
+      <xs:enumeration value="string" />
+      <xs:enumeration value="object" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="DDL" type="DDLDocument" />
+  <xs:element name="behavior" type="Behavior" />
+  <xs:element name="behaviordef" type="BehaviorDefinition" />
+  <xs:element name="behaviorset" type="BehaviorSet" />
+  <xs:element name="device" type="Device" />
+  <xs:element name="hd" type="IdentifiedLeafNode" />
+  <xs:element name="includedev" type="IncludeDevice" />
+  <xs:element name="label" type="Label" />
+  <xs:element name="language" type="Language" />
+  <xs:element name="languageset" type="LanguageSet" />
+  <xs:element name="maxinclusive" type="MaxInclusive" />
+  <xs:element name="mininclusive" type="MinInclusive" />
+  <xs:element name="alternatefor" type="ModuleReference" />
+  <xs:element name="extends" type="ModuleReference" />
+  <xs:element name="p" type="Paragraph" />
+  <xs:element name="parameter" type="Parameter" />
+  <xs:element name="choice" type="ParameterChoice" />
+  <xs:element name="refinement" type="ParameterRefinement" />
+  <xs:element name="property" type="Property" />
+  <xs:element name="propertypointer" type="PropertyPointer" />
+  <xs:element name="protocol" type="Protocol" />
+  <xs:element name="refines" type="Refines" />
+  <xs:element name="section" type="Section" />
+  <xs:element name="setparam" type="SetParameter" />
+  <xs:element name="string" type="String" />
+  <xs:element name="useprotocol" type="UseProtocol" />
+  <xs:element name="UUIDname" type="UUIDName" />
+  <xs:element name="value" type="Value" />
+</xs:schema>

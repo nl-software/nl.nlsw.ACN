@@ -1,0 +1,71 @@
+TOPIC
+    about_ACN
+
+SHORT DESCRIPTION
+    Introduces the Architecture for Control Networks standard.
+
+LONG DESCRIPTION
+    The Architecture for Control Networks (ACN) is a suite of network protocols for control of
+    entertainment technology equipment.
+
+    Application areas include live performance or large-scale installations, for example,
+    lighting, audio or special effects equipment. ACN is maintained by the
+    Entertainment Services and Technology Association (ESTA) and its first official release was
+    « ANSI Standard E1.17-2006 - Entertainment Technology - Architecture for Control Networks ».
+
+    The standard was subsequently revised and released as ANSI E1.17-2010. The current version
+    is ANSI E1.17-2015, which is almost equal to the 2010 edition. This is at least true for the
+    part of ACN used here, the ACN Device Description Language.
+
+    Note: The ANSI standard documents of ACN are available for free (given an e-mail address)
+    on the website of the ESTA.
+
+ACN Device Description Language
+    Apart from the suite of protocols, ACN contains a formal language for describing the (external)
+    interface of a device, the *Device Description Language* (DDL). The generic syntax and data
+    model of this language, make it a suitable language for a fieldbus-oriented description or
+    specification of any electronic device.
+
+    The Device Description Language (DDL) enables a machine readable description of the interface and
+    capabilities of the device. This description can be interpreted by an external
+    control system which may then automatically configure itself for controlling that device.
+
+    The description not only provides the address and property mapping information which is necessary
+    for a fieldbus protocol to operate but it can also contain a huge amount of information on the
+    functionality, capabilities and semantics of the device in an extensible format which allows
+    a controller to extract the features it needs for its specific context while skipping over
+    information which is not relevant to its needs.
+
+    The DDL description can also be used during the development process of the device itself, as
+    formal specification of the data model of the device. The DDL can form the input for automated
+    implementation of data structures, input/output handling, or other parts of the system.
+
+    DDL is an XML based language and descriptions are contained in a number of XML documents,
+    called *modules*. A module is one of three types:
+
+    - <ddl:device>      - contains the description of a device, as a list of (nested)
+                          properties and include-devices;
+
+    - <ddl:behaviorset> - a list of 'behavior' definitions, the description of the
+                          semantics of a property aspect;
+
+    - <ddl:languageset> - a list of tagged strings with (natural) language specific
+                          implementations.
+
+    In normal ACN systems the description for a device may be downloaded from the device itself.
+    However, descriptions may also be distributed in other ways (such as internet download) and since
+    a description is valid for all devices of the same type, control systems can typically maintain a
+    cache of descriptions for devices they commonly encounter.
+
+    The main difference of the ACN DDL compared to similar languages of other fieldbus specifications
+    is the very generic device model that is in the XML language itself. All application specifics
+    are (and should be) specified in the behavior definitions. E.g. definitions of measurement units
+    of properties are not in the XML language, but are defined as *behavior*.
+
+    This makes the ACN DDL suitable as a meta language for many fieldbus applications outside of the
+    entertainment world.
+
+SEE ALSO
+    - https://en.wikipedia.org/wiki/Architecture_for_Control_Networks
+    - https://webstore.ansi.org/Standards/ESTA/ANSIE1172015
+    - https://tsp.esta.org/tsp/documents/published_docs.php

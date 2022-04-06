@@ -1,0 +1,940 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:html="http://www.w3.org/1999/xhtml">
+  <behaviorset xml:id="acn.dms.bset" date="2021-08-27" UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" provider="http://www.nlsw.nl">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="d06332cc-d4e1-4018-ac83-3fba91c34c83" name="acn.dms.lset" />
+    <label set="acn.dms.lset" key="device.bset"/>
+    <extends UUID="acnbase.bset" />
+
+    <behaviordef name="admittance">
+      <label>Electric Admittance</label>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Electric Admittance</hd>
+        <p>A floating point value in siemens representing electric admittance.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="admittance.frequency">
+      <label>Electric Admittance Frequency</label>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Electric Admittance Frequency</hd>
+        <p>A floating point value in siemens per second representing electric admittance frequency.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="alarm">
+      <label>Alarm</label>
+      <refines set="acn.dms.bset" name="type.boolean"/>
+      <refines set="acnbase.bset" name="trippable"/>
+      <section>
+        <hd>Alarm</hd>
+        <p>Indicates that the system has switched or will immediately switch to a state which is outside the specified operating conditions. An alarm is reset automatically when its driving condition is no longer present.</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=351-43-08">IEV 351-43-08</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="bit.alarm">
+      <label>Alarm (bit)</label>
+      <refines set="acn.dms.bset" name="bit.event"/>
+      <section>
+        <hd>Alarm (bit)</hd>
+        <p>Indicates that the system has switched or will immediately switch to a state which is outside the specified operating conditions. An alarm is reset automatically when its driving condition is no longer present.</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=351-43-08">IEV 351-43-08</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="alarm.inactive">
+      <label>Alarm tested when the device is not Active</label>
+      <refines set="acn.dms.bset" name="alarm"/>
+      <section>
+        <hd>Alarm tested when the device is not Active</hd>
+      </section>
+    </behaviordef>
+    <behaviordef name="angle">
+      <label>Angle</label>
+      <refines set="acnbase.bset" name="angle-rad"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Angle in radians</hd>
+        <p>A floating point value in radians representing an angle.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="angle-deg">
+      <label>Angle in degrees (°)</label>
+      <refines set="acnbase.bset" name="angle-deg"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Angle in degrees (°)</hd>
+        <p>A floating point value in degree representing an angle.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="bit">
+      <label>Bit number</label>
+      <refines set="acn.dms.bset" name="type.uint8"/>
+      <section>
+        <hd>Bit number</hd>
+        <p>The value of this immediate property is the bit number of its parent property in its grandparent's bitmap.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="comment">
+      <label>Comment</label>
+      <section>
+        <hd>Property or Device Comment</hd>
+        <p>This property is an immediate property that provides a comment on the parent property or device.</p>
+        <p>It differs from an acn.dms.bset:description that it has no function in the device itself, only in the DDL module.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="conductance">
+      <label>Electric Conductance</label>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Electric Conductance</hd>
+        <p>A floating point value in siemens representing electric conductance.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="current">
+      <label>Electric Current</label>
+      <refines set="acnbase.bset" name="current-A"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Electric Current</hd>
+        <p>A floating point value in ampère representing electric current.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="currentRMS">
+      <label>Effective Electric Current</label>
+      <refines set="acn.dms.bset" name="current"/>
+      <refines set="acn.dms.bset" name="RMS"/>
+      <section>
+        <hd>Effective Electric Current</hd>
+        <p>A floating point value in ampère representing the root means square of an alternating electric current.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="date.manufacture">
+      <label>Manufacture Date</label>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="ISOdate"/>
+      <refines set="acnbase.bset" name="persistent"/>
+      <section>
+        <hd>Manufacture Date</hd>
+        <p>The property provides the date of manufacture or production of the device.</p>
+      </section>
+    </behaviordef>
+    
+    <behaviordef name="deprecated">
+      <label>Deprecated</label>
+      <section>
+        <hd>Deprecated</hd>
+        <p>When used as refinement on a behavior definition: the use of the behavior is deprecated. Alternative behavior(s) should be mentioned in the description.</p>
+        <p>When used as behavior of property: the use of the property deprecated. </p>
+      </section>
+    </behaviordef>
+    <behaviordef name="description">
+      <label>Description</label>
+      <refines set="acnbase.bset" name="label"/>
+      <section>
+        <hd>Property or Device Description</hd>
+        <p>This property is an immediate property that provides a description of the parent property or device.</p>
+        <p>It can be a labelString (default) or a labelRef property in case translations of the text are wanted.</p>
+        <p>The description can e.g. be used as hint in the user interface, or as comment in generated code.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="density">
+      <label>Matter density</label>
+      <refines set="acn.dms.bset" name="dim-density"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Matter density</hd>
+        <p>The property represents a mass per volume, expressed in kg/m³.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="dim-density">
+      <label>Matter density dimension</label>
+      <refines set="acnbase.bset" name="dimension"/>
+      <section>
+        <hd>Matter density dimension</hd>
+        <p>The property represents a mass per volume.</p>
+        <p>Dimension: M/L^3</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="dim-length-per-time">
+      <label>Velocity dimension</label>
+      <refines set="acnbase.bset" name="dimension"/>
+      <section>
+        <hd>Velocity or speed dimension</hd>
+        <p>The property represents a length per time.</p>
+        <p>Dimension: L/T</p>
+        <p>Velocity is a vector quantity v = dr/dt, where r is position vector and t is time.</p>
+        <p>Speed is the magnitude of velocity, thus speed = |v|.</p>
+        <p>The coherent SI unit of speed and velocity is [m/s].</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=113-01-32">IEV 113-01-32 velocity</html:a>.</html:p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=113-01-32">IEV 113-01-33 speed</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="dim-mass-per-time">
+      <label>Mass Flow Rate dimension</label>
+      <refines set="acnbase.bset" name="dimension"/>
+      <section>
+        <hd>Mass Flow Rate (Qm)</hd>
+        <p>Quantity equal to the mass dm of substance crossing a given surface during a time interval with infinitesimal duration dt, divided by this duration, thus qm = dm / dt</p>
+        <p>The coherent SI unit of mass flow rate is [kg/s].</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=113-03-71">IEV 113-03-71</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="mass-per-time">
+      <label>Mass Flow Rate</label>
+      <refines set="acn.dms.bset" name="dim-mass-per-time"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Mass Flow Rate (Qm in kg/s)</hd>
+        <p>The mass of matter flowing through a cross-section in unit time, expressed in kg/s.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="dim-volume-per-time">
+      <label>Volume Flow Rate</label>
+      <refines set="acnbase.bset" name="dimension"/>
+      <section>
+        <hd>Volume Flow Rate (Qv)</hd>
+        <p>The volume flowing through the cross-section of a conduit in unit time.</p>
+        <p>The coherent SI unit of volume flow rate is [m³/s].</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=113-03-72">IEV 113-03-72</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="energy">
+      <label>Energy</label>
+      <refines set="acnbase.bset" name="energy-J"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Energy</hd>
+        <p>A floating point value in joule representing (electric) energy.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="energykWh">
+      <label>Energy (kWh)</label>
+      <refines set="acnbase.bset" name="dim-energy"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Energy (kWh)</hd>
+        <p>A floating point value in kWh representing (electric) energy.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="error">
+      <label>Error</label>
+      <refines set="acn.dms.bset" name="type.boolean"/>
+      <refines set="acnbase.bset" name="trippable"/>
+      <section>
+        <hd>Error</hd>
+        <p>Discrepancy between a computed, observed or measured value or condition, and the true, specified or theoretically correct value or condition.</p>
+		<p>Note 1 to entry: An error within a system may be caused by failure of one or more of its components, or by the activation of a systematic fault.</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=192-03-02">IEV 192-03-02</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="event">
+      <label>Event</label>
+      <refines set="acnbase.bset" name="trippable"/>
+      <section>
+        <hd>Event</hd>
+        <p>Something happened.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="bit.event">
+      <label>Event</label>
+      <refines set="acnbase.bset" name="trippable"/>
+      <refines set="acn.dms.bset" name="type.bit"/>
+      <section>
+        <hd>Event Bit</hd>
+        <p>A bit representing an event or event state. When true, the event has happened, or the event state is active. When false, the event has not happened, or the event state is not active.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="fault">
+      <label>Fault</label>
+      <refines set="acn.dms.bset" name="type.boolean"/>
+      <refines set="acnbase.bset" name="trippable"/>
+      <section>
+      <hd>Fault</hd>
+      <p>The state of an item characterized by inability to perform a required function, excluding the inability during preventive maintenance or other planned actions, or due to lack of external resources.</p>
+      <p>A fault is only reset after acknowledgement.</p>
+      <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=192-04-01">IEV 192-04-01</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="bit.fault">
+      <label>Fault (bit)</label>
+      <refines set="acn.dms.bset" name="bit.event"/>
+      <section>
+      <hd>Fault (bit)</hd>
+      <p>The state of an item characterized by inability to perform a required function, excluding the inability during preventive maintenance or other planned actions, or due to lack of external resources.</p>
+      <p>A fault is only reset after acknowledgement.</p>
+      <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=192-04-01">IEV 192-04-01</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="fault.critical">
+      <label>Critical Fault</label>
+      <refines set="acn.dms.bset" name="fault"/>
+      <section>
+      <hd>Critical Fault</hd>
+      <p>A fault which is assessed as likely to result in injury to persons, significant material damage, or other unacceptable consequences.</p>
+      <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=191-05-02">IEV 191-05-02</html:a>.</html:p>
+      <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=192-03-09">IEV 192-03-09</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="fault.persistent">
+      <label>Persistent Fault</label>
+      <refines set="acn.dms.bset" name="fault"/>
+      <section>
+      <hd>Persistent Fault</hd>
+      <p>A fault of an item that persists until an action of corrective maintenance is performed.</p>
+      <p>A fault that, in general, cannot be reset after acknowledgement without some form of maintenance. Typically, a power-up/reset of the controller is required to clear a persistent fault.</p>
+      <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=192-04-04">IEV 192-04-04</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="frequency">
+      <label>Frequency</label>
+      <refines set="acnbase.bset" name="freq-Hz"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Frequency</hd>
+        <p>A floating point value in hertz representing a frequency.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="frequency.angular">
+      <label>Angular Frequency</label>
+      <refines set="acnbase.bset" name="dim-freq"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Angular Frequency</hd>
+        <p>A floating point value in rad/s representing an angular frequency.</p>
+      </section>
+    </behaviordef>
+
+    <behaviordef name="knownConstant">
+      <label>A constant value that can be used to check the communication link.</label>
+      <refines set="acnbase.bset" name="constant"/>
+      <refines set="acn.dms.bset" name="type.uint16"/>
+      <section>
+        <hd>A known constant value</hd>
+        <p>A constant value that can be used to check the communication link.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="light">
+      <label>Multi-colour LED light</label>
+      <refines set="acnbase.bset" name="colorSpec"/>
+      <refines set="acn.dms.bset" name="type.int32"/>
+      <section>
+        <hd>Multi-colour LED light</hd>
+        <p>A light property contains the value of a LED signal, which represents a single Read/Green/Blue multi-colour Light Emitting Diode (LED). The value is represented by a 32-bit integer, with an 8-bit intensity value per channel. The Blue channel is in the least significant byte (byte 0), the Green channel in byte 1, and the
+        Red channel in byte 2. The most significant byte has no meaning.</p>
+        <p>Apart from three colour LEDs, the light property may represent two colour LEDs (e.g. red/green) as well. Obviously the unused channel has no meaning in that case.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="limitMaxCodeUnits">
+      <label>Maximum number of String Code Units</label>
+      <refines set="acnbase.bset" name="limit"/>
+      <refines set="acnbase.bset" name="type.uint"/>
+      <section>
+        <hd>Maximum number of String Code Units</hd>
+        <p>A type.string property is a Unicode string in UTF-8 encoding. The limitMaxCodeUnits sub-property defines a limit on the number of Code Units available for storing the string. For an UTF-8 string a Code Unit is an 8-bit word (octet or byte).</p>
+		<p>Note that the limitMaxCodeUnits equals the traditional Maximum Number of Characters for ASCII strings in UTF-8 encoding.</p>
+        <p>The actual memory allocated may be larger, depending on the patform's implementation of the string type. E.g. in C an additional byte may be required for storage of the NUL character that indicates the end of the string.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ip.address">
+      <label>Internet Protocol Address</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <section>
+        <hd>IP Address</hd>
+        <p>An Internet Protocol address (either IPv4 or IPv6).</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="journalled">
+      <label>Journalled</label>
+      <refines set="acnbase.bset" name="accessClass"/>
+      <section>
+        <hd>Journalled</hd>
+        <p>Modifications of properties with this behavior are logged in a journal, i.e. registered with timestamp of modification.</p>
+        <p>Note: this seems to be something like trippable -and logged (if logged is more general than at regular intervals).</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="logged">
+      <label>Logged</label>
+      <refines set="acnbase.bset" name="accessClass"/>
+      <section>
+        <hd>Logged</hd>
+        <p>The value of a property with this behavior is logged at regular intervals.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="mass">
+      <label>Mass</label>
+      <refines set="acnbase.bset" name="dim-mass"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Mass</hd>
+        <p>A floating point value in kilogram representing mass.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="object.identifier">
+      <label>Object identifier</label>
+      <refines set="acnbase.bset" name="constant"/>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <section>
+        <hd>Object identifier</hd>
+        <p>An immediate property that contains the source code name of the object or variable representing the the parent property or device.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="period">
+      <label>Time period</label>
+      <refines set="acnbase.bset" name="timePeriod"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Time period</hd>
+        <p>A floating point value in seconds representing a time period.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="period.uint32">
+      <label>Time period</label>
+      <refines set="acnbase.bset" name="timePeriod"/>
+      <refines set="acn.dms.bset" name="type.uint32"/>
+      <section>
+        <hd>Time period</hd>
+        <p>An integer value in seconds representing a time period.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="power">
+      <label>Power</label>
+      <refines set="acnbase.bset" name="power-W"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Power</hd>
+        <p>A floating point value in watt representing (electrical) power.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="pressure">
+      <label>Pressure [Pa]</label>
+      <refines set="acnbase.bset" name="pressure-Pa"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Pressure</hd>
+        <p>A floating point value in pascal representing pressure.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="pressure-bar">
+      <label>Pressure [bar]</label>
+      <refines set="acnbase.bset" name="dim-pressure"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Pressure</hd>
+        <p>A floating point value in bar representing pressure.</p>
+        <p>The pressure can be absolute or relative (e.g. gauge pressure), depending on the property.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="partNumber">
+      <label>Part Number</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Manufacturer Part Number</hd>
+        <html:p>The <html:a href="https://schema.org/mpn">https://schema.org/mpn</html:a> (Manufacturer Part Number) of the device or device component, a unique number in the Product Lifecycle Management system of the manufacturer.</html:p>
+      </section>
+    </behaviordef>
+	
+    <behaviordef name="productID">
+      <label>Product Identifier</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Product Identifier</hd>
+        <html:p>The <html:a href="https://schema.org/productID">https://schema.org/productID</html:a> of the device or device component, a unique identifier in the system context.</html:p>
+		<p>A typical implementation uses a dash-separated sequence of short identifiers, indicating the hierarchy of the part in the system.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="productName">
+      <label>Product Name</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devModelName"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Product Name</hd>
+		<html:p>The <html:a href="https://schema.org/name">https://schema.org/name</html:a> of the device or device component class.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="productURI">
+      <label>Product Uniform Resource Identifier</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+	  <refines set="acnbase.bset" name="URI"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Product Uniform Resource Identifier</hd>
+		<html:p>The uniform resource identifier as <html:a href="https://schema.org/identifier">https://schema.org/identifier</html:a> of the device or device component class.</html:p>
+		<html:p>A typical implementation uses a Univerally Unique Identifier (UUID) conform <html:a href="https://datatracker.ietf.org/doc/html/rfc4122">RFC4122</html:a>: <html:code>urn:uuid:00000000-0000-0000-0000-000000000000</html:code>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="productVersion">
+      <label>Product Version</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Product Version</hd>
+		<html:p>The <html:a href="https://schema.org/version">https://schema.org/version</html:a> of the device or device component class.</html:p>
+		<html:p>A typical implementation uses the <html:a href="https://semver.org">Semantic Versioning 2.0.0</html:a> versioning system: <html:code>0.0.0-alpha+4263.2021-06-11</html:code>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="productionDate">
+      <label>Product Instance Production Date</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="ISOdate"/>
+      <refines set="acnbase.bset" name="persistent"/>
+      <refines set="acn.dms.bset" name="setAtFactory"/>
+      <section>
+        <hd>Product Instance Production Date</hd>
+		<html:p>The <html:a href="https://schema.org/productionDate">https://schema.org/productionDate</html:a> of the device or device component instance.</html:p>
+        <p>The property provides the date of manufacture or production of the device or device component.</p>
+		<p>A typical implementation uses the ISO 8601 extended format, with 10 characters.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ratio">
+      <label>Ratio</label>
+      <refines set="acnbase.bset" name="ratio"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Ratio</hd>
+        <p>A value that defines a ratio of one property to another. Typically used to define a derived parameter, based on another parameter (persistent property).</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="releaseDate">
+      <label>Product Release Date</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acnbase.bset" name="ISOdate"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Product Release Date</hd>
+		<html:p>The <html:a href="https://schema.org/releaseDate">https://schema.org/releaseDate</html:a> of the device or device component class.</html:p>
+        <p>The property provides the date of the release of the specific version of the device or device component.</p>
+		<p>A typical implementation uses the ISO 8601 extended format, with 10 characters.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="resistance">
+      <label>Electric Resistance</label>
+      <refines set="acnbase.bset" name="resistance-ohm"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Electric Resistance</hd>
+        <p>A floating point value in ohm representing electric resistance.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="RMS">
+      <label>Root Mean Square</label>
+      <refines set="acnbase.bset" name="scalar"/>
+      <section>
+        <hd>Root Mean Square</hd>
+        <html:p>The <html:a href="http://en.wikipedia.org/wiki/Root_mean_square">root mean square</html:a> is a statistical measure of the magnitude of a varying quantity. It is calculated as the square root of the mean of the squares of the values.</html:p>
+      </section>
+    </behaviordef>
+
+    <behaviordef name="serialNumber">
+      <label>Product Instance Serial Number</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <refines set="acnbase.bset" name="devInfoItem"/>
+      <refines set="acn.dms.bset" name="setAtFactory"/>
+      <section>
+        <hd>Product Instance Serial Number</hd>
+        <html:p>The <html:a href="https://schema.org/serialNumber">https://schema.org/serialNumber</html:a> of the device or device component instance.</html:p>
+        <p>This property is a string containing the manufacturer's or producer's serial number or alphanumeric identifier of the product instance.</p>
+        <p>This string is intended primarily for human use, e.g when reporting service information, rather than as an identifier for automated decision making.</p>
+        <p>Manufacturers should take reasonable steps to ensure that no two devices they produce have the same value for this string.</p>
+		<p>Note: acnbase.bset:devSerialNo has acnbase.bset:constant behavior. This is too strict: we need to be able to 'setAtFactory' the value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="setAtCommissioning">
+      <label>Property value set at commissioning</label>
+      <refines set="acnbase.bset" name="persistent"/>
+      <section>
+        <hd>Property value set on site during commissioning</hd>
+        <p>A persistent property, normally a constant, of which the value is defined on site during commissioning.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="setAtFactory">
+      <label>Property value set at factory</label>
+      <refines set="acnbase.bset" name="persistent"/>
+      <section>
+        <hd>Property value set at factory</hd>
+        <p>A persistent property, normally a constant, of which the value is defined at the device factory.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="setAtOrdering">
+      <label>Property value set at ordering</label>
+      <refines set="acnbase.bset" name="persistent"/>
+      <section>
+        <hd>Property value set by customer at ordering</hd>
+        <p>A persistent property, normally a constant, of which the value is defined by the customer at ordering.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="speed">
+      <label>Speed</label>
+      <refines set="acn.dms.bset" name="dim-length-per-time"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Speed</hd>
+        <p>A floating point value in m/s representing speed.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="temperature">
+      <label>Temperature</label>
+      <refines set="acnbase.bset" name="temp-celsius"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Temperature</hd>
+        <p>A floating point value in degree Celsius representing temperature.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="transformation.scale.factor">
+      <label>Transformation scale factor</label>
+      <refines set="acnbase.bset" name="scalar"/>
+      <section>
+        <hd>Transformation scale factor</hd>
+        <html:p>A <html:a href="http://en.wikipedia.org/wiki/Scale_factor">scale factor</html:a> is a number which scales, or multiplies, some quantity.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="transformation.offset">
+      <label>Transformation offset</label>
+      <refines set="acnbase.bset" name="scalar"/>
+      <section>
+        <hd>Transformation offset</hd>
+        <html:p>An offset or <html:a href="http://en.wikipedia.org/wiki/Displacement_(vector)">displacement</html:a> specifies the position of a point or a particle in reference to an origin or to a previous position.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.bitmap8">
+      <label>type.bitmap8</label>
+      <refines set="acnbase.bset" name="type.bitmap"/>
+      <refines set="acn.dms.bset" name="type.uint8"/>
+      <section>
+        <hd>Bitmap type with 8 bits</hd>
+        <p>The meaning and function of the bits in the bitmap is not defined here but may be defined by refinements of this behavior, or with sub-properties with behavior acn.dms.bset:type.bit.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.Enum with the FlagsAttribute set.</p>
+        <p>Maps in C to the enumeration enum { ... } with the enumeration constants being the bitmask values of the respective bits.</p>
+        <p>Maps in C++11 to the scoped enumeration enum class : std::uint8_t { ... } with the enumeration constants being the bitmask values of the respective bits.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.bitmap32">
+      <label>type.bitmap32</label>
+      <refines set="acnbase.bset" name="type.bitmap"/>
+      <refines set="acn.dms.bset" name="type.uint32"/>
+      <section>
+        <hd>Bitmap type with 32 bits</hd>
+        <p>The meaning and function of the bits in the bitmap is not defined here but may be defined by refinements of this behavior, or with sub-properties with behavior acn.dms.bset:type.bit.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.Enum with the FlagsAttribute set.</p>
+        <p>Maps in C to the enumeration enum { ... } with the enumeration constants being the bitmask values of the respective bits.</p>
+        <p>Maps in C++11 to the scoped enumeration enum class : std::uint32_t { ... } with the enumeration constants being the bitmask values of the respective bits.</p>
+      </section>
+    </behaviordef>
+
+    <behaviordef name="type.bit">
+      <label>Bit Type</label>
+      <refines set="acnbase.bset" name="type.boolean"/>
+      <section>
+        <hd>Binary Digit Type (bit)</hd>
+        <p>A typing primitive for the members (sub-properties) of a bitmap property, where the bits have boolean semantics.</p>
+		<p>Since boolean semantics are the most common use for individual bits, rather than representing a binary integer,
+		   this typing primitive is refining the type.boolean behavior, rather than the type.integer behavior.</p>
+		<p>Does not map to a memory addressable data type, but can be used for bit-testing and setting of bitmap fields.</p>
+		<p>In C/C++ it can be used for bitfield definition, but that is rarely used due to the implementation dependency of this.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.boolean">
+      <label>Boolean Type</label>
+      <refines set="acnbase.bset" name="type.boolean"/>
+      <section>
+        <hd>Boolean Type (tcBoolean)</hd>
+        <p>A boolean property with false represented by binary zero and true by any non-zero value (preferrably 1).</p>
+		<p>Maps on C11 to atomic_bool, for thread-safe access.</p>
+		<p>Maps on C++11 to std::atomic_bool, for thread-safe access.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.float32">
+      <label>IEEE 754:2008 single-precision binary floating-point format (tcFloat32)</label>
+      <refines set="acnbase.bset" name="type.float"/>
+      <section>
+        <hd>IEEE 754:2008 single-precision binary floating-point format (32 bits)</hd>
+        <p>A floating point number with size of 4 octets.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.float64">
+      <label>IEEE 754:2008 double-precision binary floating-point type (tcFloat64)</label>
+      <refines set="acnbase.bset" name="type.float"/>
+      <section>
+        <hd>IEEE 754:2008 double-precision binary floating-point format (64 bits)</hd>
+        <p>A floating point number with size of 8 octets.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.boolean16">
+      <label>Boolean (16-bit)</label>
+      <refines set="acn.dms.bset" name="type.uint16"/>
+      <refines set="acn.dms.bset" name="type.boolean"/>
+      <section>
+      <hd>Boolean (16-bit)</hd>
+      <p>A boolean value that uses a 2 octet size.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.char">
+      <label>A Unicode character (tcChar)</label>
+      <refines set="acnbase.bset" name="type.char.UTF-32"/>
+      <section>
+        <hd>A Unicode UTF-32 encoded character</hd>
+        <p>In Unicode a code point uniquely identifies a Unicode character, which is either a character or a grapheme (a minimalistic distinctive unit of writing). A character can be composed of multiple graphemes, or of a character with graphemes, so technically a tcChar represents a Unicode code point rather than a character.</p>
+		<p>Maps on C11 to atomic_char32_t, for thread-safe access.</p>
+		<p>Maps on C++11 to std::atomic_char32_t, for thread-safe access.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.int16">
+      <label>Signed 16-bit integer type (tcInt16)</label>
+      <refines set="acnbase.bset" name="type.sint"/>
+      <section>
+        <hd>Common double octet signed integer</hd>
+        <p>A signed integer with size of 2 octets; Minimum value is -2^15 and maximum value is 2^15-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.Int16</p>
+		<p>Maps on C/C++ to (std::)atomic_int_least16_t, for thread-safe access, and to accommodate platforms without native support for int16_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.int32">
+      <label>Signed 32-bit integer type (tcInt32)</label>
+      <refines set="acnbase.bset" name="type.sint"/>
+      <section>
+        <hd>Common quadruple octet signed integer</hd>
+        <p>A signed integer with size of 4 octets; Minimum value is -2^31 and maximum value is 2^31-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.Int32</p>
+		<p>Maps on C/C++ to (std::)atomic_int_least32_t, for thread-safe access, and to accommodate platforms without native support for int32_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.int64">
+      <label>Signed 64-bit integer type (tcInt64)</label>
+      <refines set="acnbase.bset" name="type.sint"/>
+      <section>
+        <hd>Common octuple octet signed integer</hd>
+        <p>A signed integer with size of 8 octets; Minimum value is -2^63 and maximum value is 2^63-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.Int64</p>
+		<p>Maps on C/C++ to (std::)atomic_int_least64_t, for thread-safe access, and to accommodate platforms without native support for int64_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.int8">
+      <label>Signed 8-bit integer type (tcInt8)</label>
+      <refines set="acnbase.bset" name="type.sint"/>
+      <section>
+        <hd>Common single octet signed integer</hd>
+        <p>A signed integer with size of 1 octet; Minimum value is -2^7 and maximum value is 2^7-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.SByte</p>
+		<p>Maps on C/C++ to (std::)atomic_int_least8_t, for thread-safe access, and to accommodate platforms without native support for int8_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.string">
+      <label>type string (tcString)</label>
+      <refines set="acnbase.bset" name="type.string"/>
+      <section>
+        <hd>UTF-8 Encoded Unicode Character String</hd>
+        <p>A Unicode string that uses UTF-8 encoding.</p>
+        <p>This type is similar to the type.string from the acnbase.bset, but only UTF-8 encoding is allowed. In addition, a string of this type is terminated with a NUL character.</p>
+        <p>Maps to clr-namespace:global:System.String.</p>
+		<p>Maps on C to char const* for constant properties, and to char[] for non-constant properties. In this case a MaximumCodeUnits limit specification is required.</p>
+		<p>Maps on C++ to std::string. Note that this type is not atomic, so accesses are only thread-safe if the appropriate accessors are used.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.uint16">
+      <label>Unsigned 16-bit integer type (tcUInt16)</label>
+      <refines set="acnbase.bset" name="type.uint"/>
+      <section>
+        <hd>Common double octet unsigned integer</hd>
+        <p>An unsigned integer with size of 2 octets; Minimum value is 0 and maximum value is 2^16-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.UInt16</p>
+		<p>Maps on C/C++ to (std::)atomic_uint_least16_t, for thread-safe access, and to accommodate platforms without native support for uint16_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.uint32">
+      <label>Unsigned 32-bit integer type (tcUInt32)</label>
+      <refines set="acnbase.bset" name="type.uint"/>
+      <section>
+        <hd>Common quadruple octet unsigned integer</hd>
+        <p>An unsigned integer with size of 4 octets; Minimum value is 0 and maximum value is 2^32-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.UInt32</p>
+		<p>Maps on C/C++ to (std::)atomic_uint_least32_t, for thread-safe access, and to accommodate platforms without native support for uint32_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.uint64">
+      <label>Unsigned 64-bit integer type (tcUInt64)</label>
+      <refines set="acnbase.bset" name="type.uint"/>
+      <section>
+        <hd>Common octuple octet unsigned integer</hd>
+        <p>An unsigned integer with size of 8 octets; Minimum value is 0 and maximum value is 2^64-1.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.UInt64</p>
+		<p>Maps on C/C++ to (std::)atomic_uint_least64_t, for thread-safe access, and to accommodate platforms without native support for uint64_t.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.uint8">
+      <label>Unsigned 8-bit integer type (tcUInt8)</label>
+      <refines set="acnbase.bset" name="type.uint"/>
+      <section>
+        <hd>Common single octet unsigned integer</hd>
+        <p>An unsigned integer with size of 1 octet; Minimum value is 0 and maximum value is 255.</p>
+        <p>Maps on Microsoft .NET to clr-namespace:global:System.Byte</p>
+		<p>Maps on C/C++ to (std::)atomic_uint_least8_t, for thread-safe access, and to accommodate platforms without native support for uint8_t.</p>
+      </section>
+    </behaviordef>
+
+    <behaviordef name="user.role">
+      <label>User Role</label>
+      <refines set="acnbase.bset" name="accessClass"/>
+      <section>
+        <hd>User Role for Accessing Properties</hd>
+        <p>Read and write access to the network properties of the device depends on the read and
+        write property attributes of the specified protocol, but also on the role and authorization of
+        the user of the session. If no user.role is specified, access solely depends on the protocol.
+        If any refined user.role behavior is specified on a property, read and/or write access
+        is also controlled by the current user role.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.ReadAll">
+      <label>Read Access for All User Roles</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>User Role for Read Access of Properties</hd>
+        <p>This behavior specifies read access for all user roles. It is typically used in conjunction
+        with other user.role behaviors that provide write access to the property.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.Observer">
+      <label>Observer</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>Observer User Role</hd>
+        <p>An observer has read and write access to the properties that have this behavior.
+        The observer role is the default user role, for which no authentication is required.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.ReadObserver">
+      <label>Observer Read-only Access</label>
+      <refines set="acn.dms.bset" name="user.Observer"/>
+      <section>
+        <hd>Observer User Role with Read-only Access</hd>
+        <p>An observer only has read access and no write access to the properties that have this behavior.
+        The observer role is the default user role, for which no authentication is required.</p>
+        <p>You can use this behavior to make a property read-only for non-authenticated users.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.Operator">
+      <label>Operator</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>Operator User Role</hd>
+        <p>An operator is a customer representative that has read and write access to the properties that have this behavior.</p>
+        <p>The operator role requires authentication and a session should have a time-out.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.ReadOperator">
+      <label>Operator Read-only Access</label>
+      <refines set="acn.dms.bset" name="user.Operator"/>
+      <section>
+        <hd>Operator User Role with Read-only Access</hd>
+        <p>An operator is a customer representative that has read-only access to the properties that have this behavior.</p>
+        <p>The operator role requires authentication and a session should have a time-out.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.Specialist">
+      <label>Specialist</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>Application or Process Specialist User Role</hd>
+        <p>An application or process specialist is a customer representative with specialist knowledge
+        of the application of the device, and therefore is allowed read and write access to the properties that have this behavior.</p>
+        <p>The specialist role requires authentication and a session should have a time-out.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.Service">
+      <label>Service Engineer</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>Service Engineer User Role</hd>
+        <p>A service engineer is a manufacturer representative with specialist knowledge of the device,
+        and therefore is allowed read and write access to the properties that have this behavior.</p>
+        <p>The service engineer role requires authentication and a session should have a time-out.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.Expert">
+      <label>Product Expert</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>Product Expert User Role</hd>
+        <p>A product expert is a manufacturer representative with expert knowledge of the device and
+        its application, and therefore is allowed read and write access to the properties that have this behavior.</p>
+        <p>The product expert role requires authentication and a session should have a time-out.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="user.Admin">
+      <label>Administrator</label>
+      <refines set="acn.dms.bset" name="user.role"/>
+      <section>
+        <hd>Administrator User Role</hd>
+        <p>An administrator is a manufacturer representative with expert knowledge of the device, 
+        and therefore is allowed read and write access to the properties that have this behavior.</p>
+        <p>The administrator role requires authentication and a session should have a time-out.</p>
+        <p>The administrator role is specifically aimed at write access to otherwise constant
+        properties, like the serial number, typically set at the factory.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="variableName">
+      <label>Variable Name</label>
+      <section>
+        <hd>Variable Name</hd>
+        <p>The implementation variable name of the property. This sub-property can be used to document a non-systematic variable name of the property in the implementation.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="voltage">
+      <label>Electric Voltage</label>
+      <refines set="acnbase.bset" name="voltage-V"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Electric Voltage</hd>
+        <p>A floating point value in volt representing an electric voltage.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="voltageRMS">
+      <label>Effective Electric Voltage</label>
+      <refines set="acn.dms.bset" name="voltage"/>
+      <refines set="acn.dms.bset" name="RMS"/>
+      <section>
+        <hd>Effective Electric Voltage</hd>
+        <p>A floating point value in volt representing the root means square of an alternating electric voltage.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="volume">
+      <label>Volume</label>
+      <refines set="acnbase.bset" name="volume-cu-m"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Volume</hd>
+        <p>A floating point value in cubic meter representing volume.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="volume-per-time">
+      <label>Volume Flow Rate</label>
+      <refines set="acn.dms.bset" name="dim-volume-per-time"/>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Volume Flow Rate (Qv in m³/s)</hd>
+        <p>The volume of matter flowing through the cross-section of a conduit in unit time, expressed in m³/s.</p>
+        <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=113-03-72">IEV 113-03-72</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="warning">
+      <label>Warning</label>
+      <refines set="acn.dms.bset" name="type.boolean"/>
+      <refines set="acnbase.bset" name="trippable"/>
+      <section>
+      <hd>Warning</hd>
+      <p>Indicates the entrance of the system into a state which still is inside the specified operating conditions, but without intervention there will be the risk of switching into a state which is outside the specified operating conditions. A warning is reset automatically when its driving condition is no longer present.</p>
+      <html:p>See: <html:a href="http://www.electropedia.org/iev/iev.nsf/display?openform&amp;ievref=351-43-07">IEV 351-43-07</html:a>.</html:p>
+      </section>
+    </behaviordef>
+  </behaviorset>
+</DDL>

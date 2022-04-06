@@ -1,0 +1,440 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cia="https://www.can-cia.org/CANopen">
+  <device xml:id="CANopen.301.DataTypes" date="2021-10-22" UUID="e3b9a080-1a2e-4981-8322-f79d139b698f" provider="http://www.can-cia.org">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset"/>
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset"/>
+    <UUIDname UUID="5022b1ff-547d-4292-b24a-4813466374be" name="CANopen.301"/>
+    <UUIDname UUID="e3b9a080-1a2e-4981-8322-f79d139b698f" name="CANopen.301.DataTypes"/>
+    <label set="CANopen.lset" key="CANopen.301.DataTypes"/>
+    <useprotocol name="CANopen"/>
+
+	<property xml:id="Description" valuetype="immediate">
+		<behavior set="acn.dms.bset" name="description" />
+		<value type="string">The data types are placed in the object dictionary for definition purposes only.</value>
+	</property>
+	<property xml:id="Simple" valuetype="NULL">
+		<label>Simple data types</label>
+		<property xml:id="BOOLEAN" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0001" access="ro"/></protocol>
+			<property xml:id="BOOLEAN.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">1</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER8" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0002" access="ro"/></protocol>
+			<property xml:id="INTEGER8.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">8</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER16" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0003" access="ro"/></protocol>
+			<property xml:id="INTEGER16.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">16</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER32" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0004" access="ro"/></protocol>
+			<property xml:id="INTEGER32.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">32</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED8" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0005" access="ro"/></protocol>
+			<property xml:id="UNSIGNED8.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">8</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED16" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0006" access="ro"/></protocol>
+			<property xml:id="UNSIGNED16.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">16</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED32" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0007" access="ro"/></protocol>
+			<property xml:id="UNSIGNED32.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">32</value>
+			</property>
+		</property>
+		<property xml:id="REAL32" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0008" access="ro"/></protocol>
+			<property xml:id="REAL32.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">32</value>
+			</property>
+		</property>
+		<property xml:id="VISIBLE_STRING" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0009" access="ro"/></protocol>
+			<property xml:id="VISIBLE_STRING.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">0</value>
+			</property>
+		</property>
+		<property xml:id="OCTET_STRING" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x000A" access="ro"/></protocol>
+			<property xml:id="OCTET_STRING.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">0</value>
+			</property>
+		</property>
+		<property xml:id="UNICODE_STRING" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x000B" access="ro"/></protocol>
+			<property xml:id="UNICODE_STRING.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">0</value>
+			</property>
+		</property>
+
+		<property xml:id="TIME_OF_DAY" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x000C" access="ro"/></protocol>
+			<property xml:id="TIME_OF_DAY.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">48</value>
+			</property>
+		</property>
+		<property xml:id="TIME_DIFFERENCE" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x000D" access="ro"/></protocol>
+			<property xml:id="TIME_DIFFERENCE.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">48</value>
+			</property>
+		</property>
+		<property xml:id="DOMAIN" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x000F" access="ro"/></protocol>
+			<property xml:id="DOMAIN.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">0</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER24" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0010" access="ro"/></protocol>
+			<property xml:id="INTEGER24.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">24</value>
+			</property>
+		</property>
+		<property xml:id="REAL64" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0011" access="ro"/></protocol>
+			<property xml:id="REAL64.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">64</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER40" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0012" access="ro"/></protocol>
+			<property xml:id="INTEGER40.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">40</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER48" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0013" access="ro"/></protocol>
+			<property xml:id="INTEGER48.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">48</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER56" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0014" access="ro"/></protocol>
+			<property xml:id="INTEGER56.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">56</value>
+			</property>
+		</property>
+		<property xml:id="INTEGER64" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0015" access="ro"/></protocol>
+			<property xml:id="INTEGER64.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">64</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED24" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0016" access="ro"/></protocol>
+			<property xml:id="UNSIGNED24.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">24</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED40" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0018" access="ro"/></protocol>
+			<property xml:id="UNSIGNED40.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">40</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED48" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0019" access="ro"/></protocol>
+			<property xml:id="UNSIGNED48.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">48</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED56" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x001A" access="ro"/></protocol>
+			<property xml:id="UNSIGNED56.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">56</value>
+			</property>
+		</property>
+		<property xml:id="UNSIGNED64" valuetype="network">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+			<protocol name="CANopen"><cia:CANopen index="0x001B" access="ro"/></protocol>
+			<property xml:id="UNSIGNED64.Bits" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">64</value>
+			</property>
+		</property>
+	</property>
+	<property xml:id="Complex" valuetype="NULL">
+		<label>Structural data types</label>
+		<property xml:id="PDO_COMMUNICATION_PARAMETER" valuetype="NULL">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0020" /></protocol>
+			<property xml:id="PDO_COMMUNICATION_PARAMETER.COB_ID" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0020" sub="1" access="ro"/></protocol>
+				<property xml:id="PDO_COMMUNICATION_PARAMETER.COB_ID.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+			<property xml:id="PDO_COMMUNICATION_PARAMETER.TransmissionType" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0020" sub="2" access="ro"/></protocol>
+				<property xml:id="PDO_COMMUNICATION_PARAMETER.TransmissionType.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0005</value>
+				</property>
+			</property>
+			<property xml:id="PDO_COMMUNICATION_PARAMETER.InhibitTime" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0020" sub="3" access="ro"/></protocol>
+				<property xml:id="PDO_COMMUNICATION_PARAMETER.InhibitTime.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0006</value>
+				</property>
+			</property>
+			<property xml:id="PDO_COMMUNICATION_PARAMETER.Reserved" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0020" sub="4" access="ro"/></protocol>
+				<property xml:id="PDO_COMMUNICATION_PARAMETER.Reserved.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0005</value>
+				</property>
+			</property>
+			<property xml:id="PDO_COMMUNICATION_PARAMETER.EventTimer" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0020" sub="5" access="ro"/></protocol>
+				<property xml:id="PDO_COMMUNICATION_PARAMETER.EventTimer.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0006</value>
+				</property>
+			</property>
+			<property xml:id="PDO_COMMUNICATION_PARAMETER.SYNC_StartValue" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0020" sub="6" access="ro"/></protocol>
+				<property xml:id="PDO_COMMUNICATION_PARAMETER.SYNC_StartValue.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0005</value>
+				</property>
+			</property>
+		</property>
+		<property xml:id="PDO_MAPPING_PARAMETER" valuetype="network" array="64">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+			<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+			<behavior set="acnbase.bset" name="constant"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0021" /></protocol>
+			<property xml:id="PDO_MAPPING_PARAMETER.MaxSubIndex" valuetype="network" sharedefine="arraycommon">
+				<behavior set="CANopen.bset" name="maxSubIndex"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0021" sub="0" access="ro"/></protocol>
+				<property xml:id="PDO_MAPPING_PARAMETER.MaxSubIndex.Default" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">64</value>
+				</property>
+				<property xml:id="PDO_MAPPING_PARAMETER.MaxSubIndex.Max" valuetype="immediate">
+					<behavior set="acnbase.bset" name="limitMaxInc"/>
+					<value type="uint">64</value>
+				</property>
+			</property>
+			<property xml:id="PDO_MAPPING_PARAMETER.DataType" valuetype="immediate">
+				<behavior set="acnbase.bset" name="initializer"/>
+				<value type="uint">0x0007</value>
+			</property>
+		</property>
+		<property xml:id="SDO_PARAMETER" valuetype="NULL">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0022" /></protocol>
+			<property xml:id="SDO_PARAMETER.COB_ID_ClientServer" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0022" sub="1" access="ro"/></protocol>
+				<property xml:id="SDO_PARAMETER.COB_ID_ClientServer.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+			<property xml:id="SDO_PARAMETER.COB_ID_ServerClient" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0022" sub="2" access="ro"/></protocol>
+				<property xml:id="SDO_PARAMETER.COB_ID_ServerClient.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+			<property xml:id="SDO_PARAMETER.Node_ID_SDO" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0022" sub="3" access="ro"/></protocol>
+				<property xml:id="SDO_PARAMETER.Node_ID_SDO.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0005</value>
+				</property>
+			</property>
+		</property>
+		<property xml:id="IDENTITY" valuetype="NULL">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0023" /></protocol>
+			<property xml:id="IDENTITY.VendorID" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0023" sub="1" access="ro"/></protocol>
+				<property xml:id="IDENTITY.VendorID.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+			<property xml:id="IDENTITY.ProductCode" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0023" sub="2" access="ro"/></protocol>
+				<property xml:id="IDENTITY.ProductCode.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+			<property xml:id="IDENTITY.RevisionNumber" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0023" sub="3" access="ro"/></protocol>
+				<property xml:id="IDENTITY.RevisionNumber.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+			<property xml:id="IDENTITY.SerialNumber" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0023" sub="4" access="ro"/></protocol>
+				<property xml:id="IDENTITY.SerialNumber.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0007</value>
+				</property>
+			</property>
+		</property>
+		<property xml:id="OS_DEBUG_RECORD" valuetype="NULL">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0024" /></protocol>
+			<property xml:id="OS_DEBUG_RECORD.Command" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0024" sub="1" access="ro"/></protocol>
+				<property xml:id="OS_DEBUG_RECORD.Command.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x000A</value>
+				</property>
+			</property>
+			<property xml:id="OS_DEBUG_RECORD.Command" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0024" sub="2" access="ro"/></protocol>
+				<property xml:id="OS_DEBUG_RECORD.Command.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0005</value>
+				</property>
+			</property>
+			<property xml:id="OS_DEBUG_RECORD.Reply" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0024" sub="3" access="ro"/></protocol>
+				<property xml:id="OS_DEBUG_RECORD.Reply.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x000A</value>
+				</property>
+			</property>
+		</property>
+		<property xml:id="OS_COMMAND_RECORD" valuetype="NULL">
+			<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+			<protocol name="CANopen"><cia:CANopen index="0x0025" /></protocol>
+			<property xml:id="OS_COMMAND_RECORD.Command" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0025" sub="1" access="ro"/></protocol>
+				<property xml:id="OS_COMMAND_RECORD.Command.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x000A</value>
+				</property>
+			</property>
+			<property xml:id="OS_COMMAND_RECORD.Command" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0025" sub="2" access="ro"/></protocol>
+				<property xml:id="OS_COMMAND_RECORD.Command.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x0005</value>
+				</property>
+			</property>
+			<property xml:id="OS_COMMAND_RECORD.Reply" valuetype="network">
+				<behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+				<behavior set="acnbase.bset" name="constant"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0025" sub="3" access="ro"/></protocol>
+				<property xml:id="OS_COMMAND_RECORD.Reply.DataType" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0x000A</value>
+				</property>
+			</property>
+		</property>
+	</property>
+  </device>
+</DDL>

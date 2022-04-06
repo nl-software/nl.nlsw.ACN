@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cia="https://www.can-cia.org/CANopen">
+  <device xml:id="CANopen.447.DataTypes" date="2021-06-17" UUID="747b2730-db7a-4aea-8074-acf4205912c4" provider="http://www.can-cia.org">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset"/>
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset"/>
+    <UUIDname UUID="5022b1ff-547d-4292-b24a-4813466374be" name="CANopen.301"/>
+    <UUIDname UUID="e3b9a080-1a2e-4981-8322-f79d139b698f" name="CANopen.301.DataTypes"/>
+    <UUIDname UUID="747b2730-db7a-4aea-8074-acf4205912c4" name="CANopen.447.DataTypes"/>
+    <label set="CANopen.lset" key="CANopen.447.DataTypes"/>
+    <useprotocol name="CANopen"/>
+
+	<property xml:id="DeviceProfileDataTypes" valuetype="NULL">
+		<label>The static data types are placed in the object dictionary for definition purposes only.</label>
+		<property xml:id="CiA447DataTypes" valuetype="NULL">
+			<label>Data types defined in CiA 447.</label>
+			<property xml:id="UTF8" valuetype="network">
+				<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+				<protocol name="CANopen"><cia:CANopen index="0x007B" access="ro"/></protocol>
+				<property xml:id="UTF8.Bits" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">8</value>
+				</property>
+			</property>
+			<property xml:id="UTF8_STRING" valuetype="network">
+				<behavior set="CANopen.bset" name="ObjectCode.DEFTYPE"/>
+				<protocol name="CANopen"><cia:CANopen index="0x007C" access="ro"/></protocol>
+				<property xml:id="UTF8_STRING.Bits" valuetype="immediate">
+					<behavior set="acnbase.bset" name="initializer"/>
+					<value type="uint">0</value>
+				</property>
+			</property>
+			<property xml:id="START_ROUTE_GUIDANCE_RECORD" valuetype="network">
+				<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0080" access="ro"/></protocol>
+				<property xml:id="START_ROUTE_GUIDANCE_RECORD.MaxSubIndex" valuetype="network">
+					<behavior set="CANopen.bset" name="maxSubIndex"/>
+					<protocol name="CANopen"><cia:CANopen index="0x0080" sub="0" access="ro"/></protocol>
+					<property xml:id="START_ROUTE_GUIDANCE_RECORD.MaxSubIndex.Default" valuetype="immediate">
+						<behavior set="acnbase.bset" name="initializer"/>
+						<value type="uint">3</value>
+					</property>
+				</property>
+				<property xml:id="START_ROUTE_GUIDANCE_RECORD.PositionLatitude" valuetype="network">
+					<behavior set="CANopen.bset" name="type.UNSIGNED32"/>
+					<protocol name="CANopen"><cia:CANopen index="0x0080" sub="1" access="ro"/></protocol>
+					<property xml:id="START_ROUTE_GUIDANCE_RECORD.PositionLatitude.DataType" valuetype="immediate">
+						<behavior set="acnbase.bset" name="initializer"/>
+						<value type="uint">0x0007</value>
+					</property>
+				</property>
+				<property xml:id="START_ROUTE_GUIDANCE_RECORD.PositionLongitude" valuetype="network">
+					<behavior set="CANopen.bset" name="type.UNSIGNED32"/>
+					<protocol name="CANopen"><cia:CANopen index="0x0080" sub="2" access="ro"/></protocol>
+					<property xml:id="START_ROUTE_GUIDANCE_RECORD.PositionLongitude.DataType" valuetype="immediate">
+						<behavior set="acnbase.bset" name="initializer"/>
+						<value type="uint">0x0007</value>
+					</property>
+				</property>
+				<property xml:id="START_ROUTE_GUIDANCE_RECORD.StartGuidance" valuetype="network">
+					<behavior set="CANopen.bset" name="type.UNSIGNED8"/>
+					<protocol name="CANopen"><cia:CANopen index="0x0080" sub="3" access="ro"/></protocol>
+					<property xml:id="START_ROUTE_GUIDANCE_RECORD.StartGuidance.DataType" valuetype="immediate">
+						<behavior set="acnbase.bset" name="initializer"/>
+						<value type="uint">0x0005</value>
+					</property>
+				</property>
+			</property>
+			<property xml:id="TAXIMETER_CONFIGURATION_RECORD" valuetype="network">
+				<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0081" access="ro"/></protocol>
+				<property xml:id="TAXIMETER_CONFIGURATION_RECORD.MaxSubIndex" valuetype="network">
+					<behavior set="CANopen.bset" name="maxSubIndex"/>
+					<protocol name="CANopen"><cia:CANopen index="0x0081" sub="0" access="ro"/></protocol>
+					<property xml:id="TAXIMETER_CONFIGURATION_RECORD.MaxSubIndex.Default" valuetype="immediate">
+						<behavior set="acnbase.bset" name="initializer"/>
+						<value type="uint">11</value>
+					</property>
+				</property>
+				<!-- todo add field definitions -->
+			</property>
+			<property xml:id="FILE_MANAGEMENT_FILE_RECORD" valuetype="network">
+				<behavior set="CANopen.bset" name="ObjectCode.DEFSTRUCT"/>
+				<protocol name="CANopen"><cia:CANopen index="0x0082" access="ro"/></protocol>
+				<property xml:id="FILE_MANAGEMENT_FILE_RECORD.MaxSubIndex" valuetype="network">
+					<behavior set="CANopen.bset" name="maxSubIndex"/>
+					<protocol name="CANopen"><cia:CANopen index="0x0082" sub="0" access="ro"/></protocol>
+					<property xml:id="FILE_MANAGEMENT_FILE_RECORD.MaxSubIndex.Default" valuetype="immediate">
+						<behavior set="acnbase.bset" name="initializer"/>
+						<value type="uint">7</value>
+					</property>
+				</property>
+				<!-- todo add field definitions -->
+			</property>
+		</property>
+	</property>
+  </device>
+</DDL>

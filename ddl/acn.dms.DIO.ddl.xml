@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <device xml:id="acn.dms.DIO" date="2019-08-19" UUID="45c385ee-3431-45e7-837e-bef5a8236496" provider="http://www.nlsw.nl">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="d06332cc-d4e1-4018-ac83-3fba91c34c83" name="acn.dms.lset" />
+    <UUIDname UUID="45c385ee-3431-45e7-837e-bef5a8236496" name="acn.dms.DIO" />
+    <label set="acn.dms.lset" key="acn.dms.DIO" />
+    <useprotocol name="DMS"/>
+    <useprotocol name="IO.DIODriver"/>
+
+    <property xml:id="Input" valuetype="network">
+      <label>Input signal</label>
+      <behavior set="acnbase.bset" name="type.boolean"/>
+      <behavior set="acnbase.bset" name="volatile"/>
+      <value type="string">false</value>
+      <protocol name="DMS"/>
+      <protocol name="IO.DIODriver"><propref_IO module="DIO" type="DI" channel="0" read="true"/></protocol>
+    </property>
+    <property xml:id="Output" valuetype="network">
+      <label>Output signal</label>
+      <behavior set="acnbase.bset" name="type.boolean"/>
+      <behavior set="acnbase.bset" name="volatile"/>
+      <value type="string">false</value>
+      <protocol name="DMS"/>
+      <protocol name="IO.DIODriver"><propref_IO module="DIO" type="DO" channel="0" read="true" write="true"/></protocol>
+    </property>
+	</device>
+</DDL>

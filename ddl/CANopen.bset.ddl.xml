@@ -1,0 +1,506 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:html="http://www.w3.org/1999/xhtml">
+  <behaviorset xml:id="CANopen.bset" date="2021-10-22" UUID="dc528311-650f-4b8c-ab55-788876392043" provider="http://www.can-cia.org">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="99b960da-5ac1-44fa-8624-eb711f6e80f0" name="CANopen"/>
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset" />
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset" />
+    <label set="CANopen.lset" key="CANopen.bset"/>
+    <extends UUID="acn.dms.bset" />
+
+    <behaviordef name="FieldDevice">
+      <label>Field Device</label>
+      <section>
+        <hd>Field Device</hd>
+        <p>1. networked independent physical entity of an automation system capable of performing specified functions in a particular context and delimited by its interfaces</p>
+        <p>2. entity that performs control, actuating and/or sensing functions and interfaces to other such entities within an automation system</p>
+        <section>
+            <html:p>A Field Device shall have at least one <html:a href="#CANopenDevice">CANopen Device</html:a>.</html:p>
+        </section>
+      </section>
+    </behaviordef>
+    <behaviordef name="CANopenDevice">
+      <label>CANopen Device</label>
+      <section>
+        <hd>CANopen Device</hd>
+        <html:p>A CANopen device shall have at least one and up to eight <html:a href="#LogicalDevice">Logical Devices</html:a> and shall not be distributed to several Field Devices.</html:p>
+        <p>A CANopen device shall have at least one network interface (data link layer protocol and a physical layer definition), one node identifier, and at least one communication Finite State Automaton (FSA).</p>
+        <p>The first communication FSA contains the Network Management (NMT) slave state machine.</p>
+      </section>
+      <section>
+        <hd>CANopen device model</hd>
+        <p>A CANopen device comprises three units:</p>
+        <p>- the Communication unit provides the communication services.</p>
+        <p>- the Object Dictionary is the collection of data items that are shared by the application unit and the communication unit. Each object in the dictionary is addressed using a 16-bit index and an 8-bit sub-index.</p>
+        <p>- the Application unit comprises the functionality of the device with respect to the interaction with the process environment.</p>
+      </section>
+      <section>
+        <hd>CANopen application layer</hd>
+        <p>The CANopen application layer supports four types of services, two local services and two remote services:</p>
+        <p>1. A Local Service: a request of the application to the local service object, without communication to a peer service object.</p>
+        <p>2. A Provider-initated Service: an indication of an unsolicited event from the local service object to the application.</p>
+        <p>3. An Unconfirmed Service: a broadcast message, i.e. a request of the application that is transferred by the local service object to the peer service object(s) and indicated to the peer application(s) without a confirmed result.</p>
+        <p>4. A Confirmed Service: a confirmed 1-to-1 message, i.e. a request of the application that is transferred by the local service object to one specific peer service object, indicated to the peer application, and of which the peer response is transferred back and passed as confirmation to the requesting application.</p>
+      </section>
+      <section>
+        <hd>CANopen communication protocol models</hd>
+        <p>Three communication protocol models are distinguished:</p>
+        <p>- Master/Slave protocol: exactly one CANopen device is master on the network (for a function) and initiates a communication request, either as unconfirmed (broadcast) indication message, or as confirmed message with a so-called remote transmission request.</p>
+        <p>- Client/Server protocol: a client request a confirmed service of a single server.</p>
+        <p>- Producer/Consumer protocol: a producer either pushes data with an unconfirmed indication message to zero or more consumers, or one of the consumers pulls data with a remote transmission request to the producer, which responses with the data as confirmation to the requester, and indication to the other consumers.</p>
+      </section>
+      <section>
+        <hd>CANopen Data Link Layer requirements</hd>
+        <p>CANopen runs on ISO-11898-1 CAN base frames with 11-bit CAN-ID, as well as on CAN extended frames with 29-bit CAN-ID. It is not required to support CAN extended frames.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="LogicalDevice">
+      <label>Logical Device</label>
+      <section>
+        <hd>Logical Device</hd>
+        <p>representation of a field device in terms of its objects and behavior according to a field device model that describes the device’s data and behavior as viewed through a network</p>
+        <html:p>Each Logical Device may contain a number of <html:a href="#VirtualDevice">Virtual Devices</html:a> and optionally a logical device Finite State Automaton (FSA). A Logical Device shall not be distributed to several CANopen devices.</html:p>
+        <p>A Logical Device is defined in a so-called Device Profile.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="VirtualDevice">
+      <label>Virtual Device</label>
+      <section>
+        <hd>Virtual Device</hd>
+        <p>entity of software capable of accomplishing a functional element of a field device</p>
+        <p>A Virtual Device is defined in a so-called Application Profile.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="bitrate">
+      <label>bitrate</label>
+      <refines set="acn.dms.bset" name="type.uint16"/>
+      <section>
+        <hd>Bitrate</hd>
+        <p>The bitrate on the CANbus in [kbit/s]. CiA301 Table 1 recommends 10, 20, 50, 125, 250, 500, 800, or 1000 kbit/s.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="category">
+      <label>category</label>
+      <section>
+        <hd>Category</hd>
+        <p>The category and entry category defines whether the object is mandatory, optional or conditional. A
+mandatory object shall be implemented on a CANopen device. An optional object may be
+implemented on a CANopen device. The support of certain objects or features however may require
+the implementation of related objects. In this case, the relations are described in the detailed object
+specification and the object is defined as a conditional object. (Cia301:7.4.6)</p>
+        <p>The Optional category is considered the default category.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="category.mandatory">
+      <label>category.mandatory</label>
+      <refines set="CANopen.bset" name="category"/>
+      <section>
+        <hd>Category Mandatory</hd>
+        <p>A mandatory object shall be implemented on a CANopen device. (Cia301:7.4.6)</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="category.optional">
+      <label>category.optional</label>
+      <refines set="CANopen.bset" name="category"/>
+      <section>
+        <hd>Category Optional</hd>
+        <p>An optional object may be implemented on a CANopen device. (Cia301:7.4.6)</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="category.conditional">
+      <label>category.conditional</label>
+      <refines set="CANopen.bset" name="category"/>
+      <section>
+        <hd>Category Conditional</hd>
+        <p>The support of certain objects or features however may require the implementation of
+related objects. In this case, the relations are described in the detailed object
+specification and the object is defined as a conditional object. (Cia301:7.4.6)</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="deprecated">
+      <label>deprecated</label>
+      <section>
+        <hd>Deprecated object</hd>
+        <p>The use of the object is deprecated, either officially or onofficially. Other objects or functions should be used instead.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="maxSubIndex">
+      <label>maxSubIndex</label>
+      <refines set="CANopen.bset" name="type.UNSIGNED8"/>
+      <refines set="CANopen.bset" name="category.mandatory"/>
+      <refines set="CANopen.bset" name="PDOMapping.No"/>
+      <section>
+        <hd>Highest Sub-Index</hd>
+        <html:p>If an object dictionary object contains several sub-indices (with <html:a href="#ObjectCode.ARRAY">ObjectCode.ARRAY</html:a> and <html:a href="#ObjectCode.RECORD">ObjectCode.RECORD</html:a>), then sub-index 00h describes the highest available sub-index that follows, not considering FFh. This object entry has this maxSubIndex behavior, and is encoded as UNSIGNED8.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode">
+      <label>Object Code</label>
+      <section>
+        <hd>Object Code</hd>
+        <p>The object code shall denote what kind of object is at that particular index within the object dictionary. (Cia301:7.4.3)</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.NULL">
+      <label>Object Code NULL</label>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <section>
+        <hd>Object Code NULL (0x00)</hd>
+        <p>An object with no data fields.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.DOMAIN">
+      <label>Object Code DOMAIN</label>
+      <refines set="CANopen.bset" name="deprecated"/>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <refines set="acnbase.bset" name="type.varBinob"/>
+      <section>
+        <hd>Object Code DOMAIN (0x02)</hd>
+        <p>Large variable amount of data e.g. executable program code.</p>
+        <p>NOTE: this Object Code is removed in CiA 1301: DOMAIN is a data type, not an object code.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.DEFTYPE">
+      <label>Object Code DEFTYPE</label>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <refines set="CANopen.bset" name="type.UNSIGNED32"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Object Code DEFTYPE (0x05)</hd>
+        <p>Denotes a standard data type definition such as a BOOLEAN, UNSIGNED16, REAL32 and so on.</p>
+        <p>A DEFTYPE data object optionally may provide (on read) the length of the standard data type in number of bits, encoded as UNSIGNED32.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.DEFSTRUCT">
+      <label>Object Code DEFSTRUCT</label>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <refines set="acnbase.bset" name="constant"/>
+      <section>
+        <hd>Object Code DEFSTRUCT (0x06)</hd>
+        <p>Defines a new record type e.g. the PDO mapping structure at 21h.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.VAR">
+      <label>Object Code VAR</label>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <section>
+        <hd>Object Code VAR (0x07)</hd>
+        <p>A single value such as an UNSIGNED8, BOOLEAN, FLOAT, INTEGER16, VISIBLE STRING etc.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.ARRAY">
+      <label>Object Code ARRAY</label>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <section>
+        <hd>Object Code ARRAY (0x08)</hd>
+        <p>A multiple data field object where each data field is a simple variable of the SAME basic data type e.g. array of UNSIGNED16 etc. Sub-index 0 is of UNSIGNED8 and therefore not part of the ARRAY data.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="ObjectCode.RECORD">
+      <label>Object Code RECORD</label>
+      <refines set="CANopen.bset" name="ObjectCode"/>
+      <section>
+        <hd>Object Code RECORD (0x09)</hd>
+        <p>A multiple data field object where the data fields may be any combination of simple variables. Sub-index 0 is of UNSIGNED8 and sub-index 255 is of UNSIGNED32 and therefore not part of the RECORD data.</p>
+        <p>A RECORD is represented in ACN DDL by a property with valuetype NULL and the ObjectCode.RECORD behavior.</p>
+		<p>It must have a cia:CANopen protocol element specifying the index of the object, without subindex. The value of the subindex 0 entry is implicitly defined
+		by the highest sub-index of child properties with the same CANopen index (excluding subindex 255).</p>
+		<p>Sub-index 255 holds the data object structure element. It describes the structure of the object by providing the data type and the object type of the object.
+		It is encoded as UNSIGNED32 and organized as follows:
+		- the least significant byte contains the ObjectCode (usually RECORD, 0x09)
+		- the 16-bit data type in the middle bytes
+		</p>
+		<p>The data object structure element sub-index is currently not supported by the ACN DDL model. It can be explicity modeled with a sub-index 255 entry.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="PDOMapping">
+      <label>PDO Mapping</label>
+      <refines set="acn.dms.bset" name="deprecated"/>
+      <section>
+        <hd>PDO Mapping</hd>
+        <p>Shall define if this object shall be mapped to a PDO. Description:
+Optional: Object may be mapped into a PDO
+Default: Object is part of the default mapping (see device profile or
+application profile)
+TPDO: Object may be mapped into a TPDO and shall not be mapped into a RPDO
+RPDO: Object may be mapped into a RPDO and shall not be mapped into a TPDO
+No: Object shall not be mapped into a PDO (Cia301:7.5.1)</p>
+        <p>The Optional category is considered the default category.</p>
+        <html:p>This behavior is replaced by the CiA 1301 behavior <a href="#pdo">CANopen.bset:pdo</a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="PDOMapping.Optional">
+      <label>PDO Mapping Optional</label>
+      <refines set="CANopen.bset" name="PDOMapping"/>
+      <section>
+        <hd>PDO Mapping Optional</hd>
+        <p>Object may be mapped into a PDO.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="PDOMapping.Default">
+      <label>PDO Mapping Default</label>
+      <refines set="CANopen.bset" name="PDOMapping"/>
+      <section>
+        <hd>PDO Mapping Default</hd>
+        <p>Object is part of the default mapping (see device profile or application profile).</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="PDOMapping.No">
+      <label>PDO Mapping No</label>
+      <refines set="CANopen.bset" name="PDOMapping"/>
+      <section>
+        <hd>PDO Mapping No</hd>
+        <p>Object shall not be mapped into a PDO.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="PDOMapping.TPDO">
+      <label>PDO Mapping TPDO</label>
+      <refines set="CANopen.bset" name="PDOMapping"/>
+      <section>
+        <hd>PDO Mapping TPDO</hd>
+        <p>Object may be mapped into a TPDO and shall not be mapped into a RPDO.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="PDOMapping.RPDO">
+      <label>PDO Mapping RPDO</label>
+      <refines set="CANopen.bset" name="PDOMapping"/>
+      <section>
+        <hd>PDO Mapping RPDO</hd>
+        <p>Object may be mapped into a RPDO and shall not be mapped into a TPDO.</p>
+      </section>
+    </behaviordef>
+
+    <behaviordef name="pdo">
+      <label>PDO Access</label>
+      <refines set="acnbase.bset" name="accessClass"/>
+      <section>
+        <hd>PDO Access</hd>
+        <p>A behaviorgroup that defines the PDO access to the property.</p>
+		<p>This behavior is specified in table 65 of CiA1301. It replaces the PDOMapping ad defined in CiA301:7.5.1.</p>
+		<html:section>
+		<html:p>Behavior values:</html:p>
+		<html:ul>
+		<html:li>t - The data element may be mapped into TPDO</html:li>
+		<html:li>r - The data element may be mapped into RPDO</html:li>
+		<html:li>tr - The data element may be mapped into TPDO or RPDO or both</html:li>
+		<html:li>no - The data element shall not be mapped into PDO</html:li>
+		</html:ul>
+		</html:section>
+        <p>The no value is considered the default category.</p>
+		<p>This behavior is modeled as pdo attribute of the cia:CANopen element that specifies the CANopen protocol access to the property.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="pdo.no">
+      <label>No PDO Access</label>
+      <refines set="CANopen.bset" name="pdo"/>
+      <section>
+        <hd>No PDO Access</hd>
+		<p>The data element shall not be mapped into PDO.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="pdo.t">
+      <label>PDO Access via TPDO</label>
+      <refines set="CANopen.bset" name="pdo"/>
+      <section>
+        <hd>PDO Access via TPDO</hd>
+		<p>The data element may be mapped into TPDO.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="pdo.r">
+      <label>PDO Access via RPDO</label>
+      <refines set="CANopen.bset" name="pdo"/>
+      <section>
+        <hd>PDO Access via RPDO</hd>
+		<p>The data element may be mapped into RPDO.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="pdo.tr">
+      <label>PDO Access via RPDO or TPDO</label>
+      <refines set="CANopen.bset" name="pdo"/>
+      <section>
+        <hd>PDO Access via RPDO or TPDO</hd>
+		<p>The data element may be mapped into TPDO, or RPDO, or both.</p>
+      </section>
+    </behaviordef>
+
+    <behaviordef name="type.NIL">
+      <label>type.NIL</label>
+      <refines set="acnbase.bset" name="NULL"/>
+      <section>
+        <hd>Basic data type NIL</hd>
+        <html:p>Data of basic data type NIL is represented by ε. This data type represents a bit sequence of length 0. A data object of <html:a href="#ObjectType.NULL">ObjectType.NULL</html:a> could have this data type.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.BOOLEAN">
+      <label>type.BOOLEAN</label>
+      <refines set="acn.dms.bset" name="type.boolean"/>
+      <section>
+        <hd>Basic data type BOOLEAN</hd>
+        <p>A data object of basic data type BOOLEAN attains the value TRUE or FALSE. The value is represented as a bit sequence of length 1. The value TRUE (res. FALSE) is represented by the bit sequence 1 (res. 0).</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.DOMAIN">
+      <label>type.DOMAIN</label>
+      <refines set="acnbase.bset" name="type.varBinob"/>
+      <section>
+        <hd>Basic data type DOMAIN</hd>
+        <p>Domains are used to transfer an arbitrary large block of data from a client to a server and vice versa. The content of a data block is application specific and does not fall within the scope of this specification.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.INTEGER">
+      <label>type.INTEGER</label>
+      <refines set="acnbase.bset" name="type.int"/>
+      <section>
+        <hd>Basic data types INTEGERn</hd>
+        <p>A data object of basic data type INTEGERn has a two-complements binary integer value. The value is represented as a bit sequence of length n.</p>
+        <p>Note that in CiA 301 a bit sequence is written from left to write starting with the least significant bit first. However, transmission of a data object over the CAN data link is in a series of octets with the least significant octet first. As usual, of each octet the most significant bit is transmitted first.</p>
+        <html:p>INTEGER types defined here: <html:a href="#type.INTEGER8">type.INTEGER8</html:a>, <html:a href="#type.INTEGER16">type.INTEGER16</html:a>, <html:a href="#type.INTEGER32">type.INTEGER32</html:a>, <html:a href="#type.INTEGER64">type.INTEGER64</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.INTEGER16">
+      <label>type.INTEGER16</label>
+      <refines set="acn.dms.bset" name="type.int16"/>
+      <refines set="CANopen.bset" name="type.INTEGER"/>
+      <section>
+        <hd>INTEGER16</hd>
+        <p>A 16-bit signed integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.INTEGER32">
+      <label>type.INTEGER32</label>
+      <refines set="acn.dms.bset" name="type.int32"/>
+      <refines set="CANopen.bset" name="type.INTEGER"/>
+      <section>
+        <hd>INTEGER32</hd>
+        <p>A 32-bit signed integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.INTEGER64">
+      <label>type.INTEGER64</label>
+      <refines set="acn.dms.bset" name="type.int64"/>
+      <refines set="CANopen.bset" name="type.INTEGER"/>
+      <section>
+        <hd>INTEGER64</hd>
+        <p>A 64-bit signed integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.INTEGER8">
+      <label>type.INTEGER8</label>
+      <refines set="acn.dms.bset" name="type.int8"/>
+      <refines set="CANopen.bset" name="type.INTEGER"/>
+      <section>
+        <hd>INTEGER8</hd>
+        <p>An 8-bit signed integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.OCTET_STRING">
+      <label>type.OCTET_STRING</label>
+      <refines set="acnbase.bset" name="type.varBinob"/>
+      <section>
+        <hd>Basic data type OCTET_STRING</hd>
+        <html:p>An OCTET_STRING is an array of <html:a href="#type.UNSIGNED8">type.UNSIGNED8</html:a> octets, a.k.a. bytes. It is used for arbitrary binary or textual data.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.REAL32">
+      <label>type.REAL32</label>
+      <refines set="acn.dms.bset" name="type.float32"/>
+      <section>
+        <hd>Basic data types REAL32</hd>
+        <p>A data object of basic data type REAL32 has a single-precision floating point value. The value is represented as a bit sequence of length 32. Transmission of the bits is similar to the same bit series representing an UNSIGNED32.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.REAL64">
+      <label>type.REAL64</label>
+      <refines set="acn.dms.bset" name="type.float64"/>
+      <section>
+        <hd>Basic data types REAL64</hd>
+        <p>A data object of basic data type REAL64 has a double-precision floating point value. The value is represented as a bit sequence of length 64. Transmission of the bits is similar to the same bit series representing an UNSIGNED64.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UNICODE_STRING">
+      <label>type.UNICODE_STRING</label>
+      <refines set="acnbase.bset" name="textString"/>
+      <section>
+        <hd>Basic data type UNICODE_STRING</hd>
+        <html:p>A UNICODE_STRING is an array of <html:a href="#type.UNSIGNED16_CHAR">type.UNSIGNED16</html:a> integers, representing UTF-16 encoded Unicode characters.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UNSIGNED">
+      <label>type.UNSIGNED</label>
+      <refines set="acnbase.bset" name="type.uint"/>
+      <section>
+        <hd>Basic data types UNSIGNEDn</hd>
+        <p>A data object of basic data type UNSIGNEDn has a non-negative binary integer value. The value is represented as a bit sequence of length n.</p>
+        <p>Note that in CiA 301 a bit sequence is written from left to write starting with the least significant bit first. However, transmission of a data object over the CAN data link is in a series of octets with the least significant octet first. As usual, of each octet the most significant bit is transmitted first.</p>
+        <html:p>UNSIGNED types defined here: <html:a href="#type.UNSIGNED8">type.UNSIGNED8</html:a>, <html:a href="#type.UNSIGNED16">type.UNSIGNED16</html:a>, <html:a href="#type.UNSIGNED32">type.UNSIGNED32</html:a>, <html:a href="#type.UNSIGNED64">type.UNSIGNED64</html:a>.</html:p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UNSIGNED16">
+      <label>type.UNSIGNED16</label>
+      <refines set="acn.dms.bset" name="type.uint16"/>
+      <refines set="CANopen.bset" name="type.UNSIGNED"/>
+      <section>
+        <hd>UNSIGNED16</hd>
+        <p>A 16-bit unsigned integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UNSIGNED32">
+      <label>type.UNSIGNED32</label>
+      <refines set="acn.dms.bset" name="type.uint32"/>
+      <refines set="CANopen.bset" name="type.UNSIGNED"/>
+      <section>
+        <hd>UNSIGNED32</hd>
+        <p>A 32-bit unsigned integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UNSIGNED64">
+      <label>type.UNSIGNED64</label>
+      <refines set="acn.dms.bset" name="type.uint64"/>
+      <refines set="CANopen.bset" name="type.UNSIGNED"/>
+      <section>
+        <hd>UNSIGNED64</hd>
+        <p>A 64-bit unsigned integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UNSIGNED8">
+      <label>type.UNSIGNED8</label>
+      <refines set="acn.dms.bset" name="type.uint8"/>
+      <refines set="CANopen.bset" name="type.UNSIGNED"/>
+      <section>
+        <hd>UNSIGNED8</hd>
+        <p>An 8-bit unsigned integer value.</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.UTF8_STRING">
+      <label>type.UTF8_STRING</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <section>
+        <hd>Data type UTF8_STRING</hd>
+        <html:p>An UTF8_STRING is an array of <html:a href="#type.UNSIGNED8">type.UNSIGNED8</html:a> octets that represent an UTF-8 encoded character string. When transferred over CANopen the string is not NUL-terminated.</html:p>
+        <p>This data type is defined in CiA 447, so its usage seems restricted to that profile only. The allowed character set is also restricted.</p>
+        <p>This data type is available in the emotas Device Designer, but it cannot be generally used. In the EDS the DataType is set to 5 (UNSIGNED8).</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.VISIBLE_STRING">
+      <label>type.VISIBLE_STRING</label>
+      <refines set="acn.dms.bset" name="type.string"/>
+      <section>
+        <hd>Basic data type VISIBLE_STRING</hd>
+        <html:p>A VISIBLE_STRING is an array of <html:a href="#type.UNSIGNED8">type.UNSIGNED8</html:a> octets, representing character codepoints in the Unicode range U+0000, U+0020..U+007E.</html:p>
+        <p>Despite its restrictions, this type is implemented as ACN DMS type.string.</p>
+        <p>Note: should this definition not be extended to allow UTF-8 encoded visible Unicode character sequences?</p>
+      </section>
+    </behaviordef>
+    <behaviordef name="type.VOID">
+      <label>type.VOID</label>
+      <refines set="acnbase.bset" name="typingPrimitive"/>
+      <section>
+        <hd>Basic data type VOIDn</hd>
+        <p>Data of basic data type VOIDn is represented as bit sequences of length n bit. The value of data of type VOIDn is undefined. The bits in the sequence of data of type VOIDn shall either be specified explicitly or else marked "do not care".</p>
+        <p>Data of type VOIDn is useful for reserved fields and for aligning components of compound values on octet boundaries.</p>
+      </section>
+    </behaviordef>
+  </behaviorset>
+</DDL>

@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cia="https://www.can-cia.org/CANopen">
+  <device xml:id="CANopen.302" date="2021-08-30" UUID="d65f3072-6b64-41a3-9ff4-f7dd0a699096" provider="http://www.can-cia.org">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset"/>
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset"/>
+    <UUIDname UUID="d65f3072-6b64-41a3-9ff4-f7dd0a699096" name="CANopen.302"/>
+    <label set="CANopen.lset" key="CANopen.302"/>
+    <useprotocol name="CANopen"/>
+
+    <property xml:id="ProgramData" valuetype="network" array="1">
+        <label>Program Data</label>
+        <behavior set="CANopen.bset" name="ObjectCode.ARRAY"/>
+        <behavior set="CANopen.bset" name="type.DOMAIN"/>
+        <behavior set="CANopen.bset" name="category.optional"/>
+        <protocol name="CANopen"><cia:CANopen index="0x1F50" access="rw"/></protocol>
+        <property xml:id="ProgramData.Description" valuetype="immediate">
+            <behavior set="acn.dms.bset" name="description" />
+            <value type="string">This object shall be used for program download to the CANopen device.
+The CANopen device may be implemented such, that it accepts a download request to 1F50h only,
+if its program status is stopped (refer to 1F51h).
+With completion of the SDO transfer, it is responded and the FlashStatusIndication in Object
+1F57h with the appropriate sub-index shall be set accordingly.
+Note: The device may start Flashing of the data immediately or it may start Flashing after all
+data is transferred.
+If the download of a program fails for any reason the transfer shall be responded with the
+SDO abort message. The SDO abort code 0606 0000h shall indicate any Flash memory
+related error.
+</value>
+        </property>
+    </property>
+    <property xml:id="ProgramControl" valuetype="network" array="1">
+        <label>Program Control</label>
+        <behavior set="CANopen.bset" name="ObjectCode.ARRAY"/>
+        <behavior set="CANopen.bset" name="type.UNSIGNED8"/>
+        <behavior set="CANopen.bset" name="category.conditional"/>
+        <protocol name="CANopen"><cia:CANopen index="0x1F51" access="rw"/></protocol>
+        <property xml:id="ProgramControl.Description" valuetype="immediate">
+            <behavior set="acn.dms.bset" name="description" />
+            <value type="string">This object shall be used for the control of the programs downloaded to the CANopen device
+(object 1F50h – ProgramData). An SDO write access shall be aborted in any other NMT state than NMT state Pre-operational.
+Values: 00 - Stop program, 01 - Start program, 02 - Reset program, 03 - Clear program
+NOTE The values are logical values. For example Clear Program may be used to clear Flash, but also may be
+only a flag for the process.
+If the requested action is not supported or not possible for any reason the transfer shall be
+responded with the SDO abort message. The SDO abort code 0609 0030h shall indicate a not
+supported action. The SDO abort code 0800 0022h shall indicate that a requested action can
+currently not be performed.
+</value>
+        </property>
+    </property>
+    <property xml:id="ProgramSoftwareIdentification" valuetype="network" array="1">
+        <label>Program Software Identification</label>
+        <behavior set="CANopen.bset" name="ObjectCode.ARRAY"/>
+        <behavior set="CANopen.bset" name="type.UNSIGNED32"/>
+        <behavior set="CANopen.bset" name="category.conditional"/>
+        <protocol name="CANopen"><cia:CANopen index="0x1F56" access="ro"/></protocol>
+        <property xml:id="ProgramSoftwareIdentification.Description" valuetype="immediate">
+            <behavior set="acn.dms.bset" name="description" />
+            <value type="string">If a CANopen device supports program software download, a network configuration tool or a
+CANopen manager may use this object to verify the version of the program software after a
+CANopen device reset and to check if a re-download is necessary.
+The CANopen device shall calculate a unique identification per program software, which it
+returns by access on the corresponding sub-index of 1F56h program software identification.
+The calculation method is implementation specific – it may be a checksum over the Flash
+page or a build number of the hex file or any other manufacturer-specific method. The
+CANopen device shall ensure that on flashing of the same program the same identification
+will result. If no valid Flash content / program software is available, the program software
+identification shall be 0. A valid program software shall not have the identification 0. If the
+CANopen device supports more than one program software, the identification shall be valid
+for the program software with the corresponding sub-index of object 1F50h.
+</value>
+        </property>
+    </property>
+    <property xml:id="NMTInhibitTime" valuetype="network">
+        <label>NMT Inhibit Time</label>
+        <behavior set="CANopen.bset" name="ObjectCode.VAR"/>
+        <behavior set="CANopen.bset" name="type.UNSIGNED16"/>
+        <behavior set="CANopen.bset" name="category.mandatory"/>
+        <protocol name="CANopen">
+			<cia:CANopen index="0x102A" access="rw|const" pdo="no"/>
+		</protocol>
+        <property xml:id="NMTInhibitTime.Description" valuetype="immediate">
+            <behavior set="acn.dms.bset" name="description" />
+            <value type="string">This object shall indicate the configured inhibit time between two subsequent NMT messages.
+The outstanding NMT services shall be queued and shall be issued in order of their
+occurrence respecting the configured inhibit time.
+The value shall be given in multiples of 100 μs. The value 0 shall disable the inhibit time.
+This object is mandatory (highly recommended) for CANopen master nodes.
+</value>
+        </property>
+        <property xml:id="NMTInhibitTime.Default" valuetype="immediate">
+            <behavior set="acnbase.bset" name="initializer"/>
+            <value type="uint">0</value>
+        </property>
+    </property>
+    <property xml:id="NMTStartup" valuetype="network">
+        <label>NMT Startup</label>
+        <behavior set="CANopen.bset" name="ObjectCode.VAR"/>
+        <behavior set="CANopen.bset" name="type.UNSIGNED32"/>
+        <behavior set="CANopen.bset" name="category.conditional"/>
+        <protocol name="CANopen"><cia:CANopen index="0x1F80" access="rw|const" pdo="no" /></protocol>
+        <property xml:id="NMTStartup.Description" valuetype="immediate">
+            <behavior set="acn.dms.bset" name="description" />
+            <value type="string">The object describes the type of the logical device and its functionality.
+This object shall configure the startup behavior of a CANopen device. Internal state
+transitions shall not change the value of this object. An attempt to change a bit of a
+functionality that is not supported by the CANopen device shall be responded with an abort
+message (abort code: 0800 0000h or 0609 0030h).
+- bit 0 NMTmaster
+- bit 1 Start all nodes
+- bit 2 NMT master start
+- bit 3 Start node (NMT master shall not start the NMT slaves)
+- bit 4 Reset all nodes
+- bit 5 Flying master
+- bit 6 Stop all nodes
+</value>
+        </property>
+        <property xml:id="NMTStartup.Default" valuetype="immediate">
+            <behavior set="acnbase.bset" name="initializer"/>
+            <value type="uint">0</value>
+        </property>
+    </property>
+  </device>
+</DDL>

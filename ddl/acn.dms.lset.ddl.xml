@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/">
+  <languageset xml:id="acn.dms.lset" date="2020-08-11" UUID="d06332cc-d4e1-4018-ac83-3fba91c34c83" provider="http://www.nlsw.nl">
+    <UUIDname UUID="d06332cc-d4e1-4018-ac83-3fba91c34c83" name="acn.dms.lset" />
+    <label set="acn.dms.lset" key="device.lset"/>
+    <language lang="en">
+      <string key="acn.dms.DIO">Digital Input/Output Signal</string>
+      <string key="default">Default</string>
+      <string key="device">Device Management System</string>
+      <string key="device.bset">Device Management System Behavior Definitions</string>
+      <string key="device.ddl">Device Description</string>
+      <string key="device.lset">Device Management System Language Set</string>
+      <string key="maximum">Maximum</string>
+      <string key="minimum">Minimum</string>
+      <string key="product.copyright">Copyright (c) 2019 by ESTA. All Rights Reserved.</string>
+      <string key="product.logo.ascii">  _  __ ___&#xA; |_ (_   |  /\ &#xA; |_ __)  | /--\ &#xA;</string>
+    </language>
+    <language lang="nl" altlang="en">
+      <string key="device">Apparaat</string>
+      <string key="device.bset">DMS Gedragsdefinities</string>
+      <string key="device.ddl">Apparaatbeschrijving</string>
+      <string key="device.lset">Tekstverzamelingen</string>
+    </language>
+  </languageset>
+</DDL>

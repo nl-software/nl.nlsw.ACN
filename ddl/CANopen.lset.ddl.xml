@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/">
+  <languageset xml:id="CANopen.lset" date="2021-12-13" UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" provider="http://www.can-cia.org">
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset" />
+    <label set="CANopen.lset" key="CANopen.lset"/>
+    <language lang="en">
+      <string key="CANopen">CANopen Object Dictionary Database</string>
+      <string key="CANopen.bset">CANopen Behavior Definitions</string>
+      <string key="CANopen.lset">CANopen Language Set</string>
+      <string key="CANopen.301">CANopen Application Layer and Communication Profile</string>
+      <string key="CANopen.301.DataTypes">CANopen Data Types</string>
+      <string key="CANopen.302">CANopen Additional Application Layer Functions</string>
+      <string key="CANopen.404">CANopen Device profile for measuring devices and closed-loop controllers</string>
+
+      <string key="default">Default</string>
+      <string key="maximum">Maximum</string>
+      <string key="minimum">Minimum</string>
+      <string key="product.copyright">Copyright (c) 2020-2021 by CiA. All Rights Reserved.</string>
+      <string key="product.logo.ascii">( /\ |\| () |^ [- |\|&#xA;</string>
+    </language>
+    <language lang="de" altlang="en">
+      <string key="CANopen.bset">Definitionen des Verhaltens von CANopen Data Dictionary</string>
+      <string key="CANopen.lset">CANopen Übersetzungen</string>
+    </language>
+    <language lang="nl" altlang="en">
+      <string key="CANopen.bset">CANopen Data Dictionary Gedragsdefinities</string>
+      <string key="CANopen.lset">CANopen Vertalingen</string>
+    </language>
+  </languageset>
+</DDL>

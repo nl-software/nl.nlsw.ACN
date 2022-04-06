@@ -1,0 +1,239 @@
+<!--
+	DTD for Device Descritpion Language 1.1
+
+	no specific protocol declared
+
+	"-//ESTA//DTD Device Description Language 1.1//EN"
+
+	Extracted from ACN-ddl_2009-1024r1pub.pdf Appendix A.
+
+	xmlsn:ddl="http://www.esta.org/acn/namespace/ddl/2008/"
+-->
+<!ELEMENT DDL ((behaviorset | device | languageset))>
+<!ATTLIST DDL
+	version ( 1.1 ) #REQUIRED
+	xml:id ID #IMPLIED
+	xmlns CDATA #FIXED "http://www.esta.org/acn/namespace/ddl/2008/"
+>
+<!-- common module content -->
+<!ELEMENT label (#PCDATA)>
+<!ATTLIST label
+	label.paramname NMTOKEN #IMPLIED
+	set NMTOKEN #IMPLIED
+	set.paramname NMTOKEN #IMPLIED
+	key NMTOKEN #IMPLIED
+	key.paramname NMTOKEN #IMPLIED
+	xml:id ID #IMPLIED
+>
+<!ELEMENT alternatefor EMPTY>
+<!ATTLIST alternatefor
+	UUID NMTOKEN #REQUIRED
+	UUID.paramname NMTOKEN #IMPLIED
+	xml:id ID #IMPLIED
+>
+<!ELEMENT extends EMPTY>
+<!ATTLIST extends
+	UUID NMTOKEN #REQUIRED
+	UUID.paramname NMTOKEN #IMPLIED
+	xml:id ID #IMPLIED
+>
+<!ELEMENT UUIDname EMPTY>
+<!ATTLIST UUIDname
+	name NMTOKEN #REQUIRED
+	UUID NMTOKEN #REQUIRED
+	xml:id ID #IMPLIED
+>
+<!-- languageset module -->
+<!ELEMENT languageset (
+	UUIDname*, label?,
+	alternatefor*,
+	extends*,
+	language+
+)>
+<!ATTLIST languageset
+	UUID NMTOKEN #REQUIRED
+	provider CDATA #REQUIRED
+	date NMTOKEN #REQUIRED
+	xml:id ID #IMPLIED
+>
+<!-- languageset content -->
+<!ELEMENT language (label?, string*)>
+<!ATTLIST language
+	lang CDATA #REQUIRED
+	altlang CDATA #IMPLIED
+	xml:id ID #IMPLIED
+>
+<!ELEMENT string (#PCDATA)>
+<!ATTLIST string
+	key NMTOKEN #REQUIRED
+	xml:id ID #IMPLIED
+>
+<!-- behaviorset module -->
+<!ELEMENT behaviorset (
+	UUIDname*, label?,
+	alternatefor*,
+	extends*,
+	behaviordef+
+)>
+<!ATTLIST behaviorset
+	UUID NMTOKEN #REQUIRED
+	provider CDATA #REQUIRED
+	date NMTOKEN #REQUIRED
+	xml:id ID #IMPLIED
+>
+<!-- behaviorset content -->
+<!ELEMENT behaviordef (label?, refines*, section+)>
+<!ATTLIST behaviordef
+	name NMTOKEN #REQUIRED
+	xml:id ID #IMPLIED
+>
+<!ELEMENT refines EMPTY>
+<!ATTLIST refines
+set NMTOKEN #REQUIRED
+name NMTOKEN #REQUIRED
+xml:id ID #IMPLIED
+>
+<!ELEMENT section (hd?, (section | p)+)>
+<!ATTLIST section
+xml:id ID #IMPLIED
+>
+<!ELEMENT hd (#PCDATA)>
+<!ATTLIST hd
+xml:id ID #IMPLIED
+>
+<!ELEMENT p (#PCDATA)>
+<!ATTLIST p
+xml:space (default | preserve) 'default'
+xml:id ID #IMPLIED
+>
+<!-- device module -->
+<!ELEMENT device (
+UUIDname*, parameter*, label?,
+alternatefor*,
+extends*,
+useprotocol+,
+(property | propertypointer | includedev)+
+)>
+<!ATTLIST device
+UUID NMTOKEN #REQUIRED
+provider CDATA #REQUIRED
+date NMTOKEN #REQUIRED
+xml:id ID #IMPLIED
+>
+<!-- parameter declarations -->
+<!ELEMENT parameter (
+label?,
+( choice*
+| refinement*
+| ( mininclusive?, maxinclusive?)
+)
+)>
+<!ATTLIST parameter
+name NMTOKEN #REQUIRED
+xml:id ID #IMPLIED
+>
+<!--parameter restrictions -->
+<!ELEMENT choice (#PCDATA)>
+<!ATTLIST choice
+choice.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT mininclusive (#PCDATA)>
+<!ATTLIST mininclusive
+mininclusive.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT maxinclusive (#PCDATA)>
+<!ATTLIST maxinclusive
+maxinclusive.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT refinement (#PCDATA)>
+<!ATTLIST refinement
+refinement.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!-- see below for useprotocol and other protocol dependent content -->
+<!-- properties -->
+<!ELEMENT property (
+label?,
+behavior+,
+value*,
+protocol*,
+(property | propertypointer | includedev)*
+)>
+<!ATTLIST property
+array CDATA #IMPLIED
+array.paramname NMTOKEN #IMPLIED
+valuetype (NULL | immediate | implied | network) #REQUIRED
+valuetype.paramname NMTOKEN #IMPLIED
+sharedefine (false | true | arraycommon) "false"
+sharedefine.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT behavior EMPTY>
+<!ATTLIST behavior
+set NMTOKEN #REQUIRED
+set.paramname NMTOKEN #IMPLIED
+name NMTOKEN #REQUIRED
+name.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT value (#PCDATA)>
+<!ATTLIST value
+value.paramname NMTOKEN #IMPLIED
+type (uint | sint | float | string | object) #REQUIRED
+type.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT propertypointer EMPTY>
+<!ATTLIST propertypointer
+ref CDATA #REQUIRED
+ref.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!-- included devices and parameter instantiation -->
+<!ELEMENT includedev (label?, protocol*, setparam*)>
+<!ATTLIST includedev
+UUID NMTOKEN #REQUIRED
+UUID.paramname NMTOKEN #IMPLIED
+array CDATA #IMPLIED
+array.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!ELEMENT setparam (#PCDATA)>
+<!ATTLIST setparam
+	name NMTOKEN #REQUIRED
+	setparam.paramname NMTOKEN #IMPLIED
+	xml:id ID #IMPLIED
+>
+<!-- Protocol dependent section -->
+<!--
+The following elements have generic content models here
+They may be specialized as described for specific protocols
+-->
+<!ELEMENT useprotocol EMPTY>
+<!ATTLIST useprotocol
+name CDATA #REQUIRED
+name.paramname NMTOKEN #IMPLIED
+xml:id ID #IMPLIED
+>
+<!--
+Note:
+The name attribute shall be an ESTA registered name.
+-->
+<!ELEMENT protocol ANY >
+<!ATTLIST protocol
+	name CDATA #REQUIRED
+	name.paramname NMTOKEN #IMPLIED
+	xml:id ID #IMPLIED
+>
+<!--
+Notes:
+The name attribute shall match the ESTA registered name
+of a protocol declared in a preceding useprotocol element.
+Content must conform to rules specified for the protocol
+identified by the name attribute.
+No further attributes permitted.
+-->
+<!-- End of protocol dependent section -->

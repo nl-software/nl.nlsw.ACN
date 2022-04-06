@@ -1,0 +1,1384 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL xmlns:cia="https://www.can-cia.org/CANopen" xmlns:html="http://www.w3.org/1999/xhtml" version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/">
+  <device xml:id="CANopen.301" date="2020-12-13" provider="http://www.can-cia.org" UUID="5022b1ff-547d-4292-b24a-4813466374be">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
+    <UUIDname UUID="5022b1ff-547d-4292-b24a-4813466374be" name="CANopen.301" />
+    <UUIDname UUID="e3b9a080-1a2e-4981-8322-f79d139b698f" name="CANopen.301.DataTypes" />
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset" />
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset" />
+    <label set="CANopen.lset" key="CANopen.301" />
+    <useprotocol name="CANopen" />
+    <includedev xml:id="DataTypes" UUID="CANopen.301.DataTypes">
+      <label>DataTypes</label>
+      <protocol name="CANopen" />
+    </includedev>
+    <property xml:id="DeviceType" valuetype="network">
+      <label>Device Type</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.mandatory" />
+      <behavior set="acnbase.bset" name="devInfoItem" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1000" access="ro" pdo="no" />
+      </protocol>
+      <property xml:id="DeviceType.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The object describes the type of the logical device and its functionality.
+It shall be composed of a 16-bit field that describes the device profile or the application profile that is used
+and a second 16-bit field, which gives additional information about optional functionality of the logical device.
+The additional information parameter is device profile specific and application profile specific. Its specification
+does not fall within the scope of this specification; it is defined in the appropriate device profile and application profile.
+
+The value 0000h for the device profile number shall indicate a logical device that does not follow a
+standardized profile. In this case the additional information shall be 0000h (if no further logical
+device is implemented) or FFFFh (if a further logical device is implemented).
+For multiple logical device modules the additional information parameter shall be FFFFh and the
+device profile number referenced by object 1000h shall be the profile of the first logical device in
+the object dictionary. All other profiles of a multiple logical device module shall identify their
+profiles at objects 67FFh + x * 800h with x = internal number of the logical device (from 1 to 8)
+minus 1. These objects shall describe the device type of the preceding logical device, having the
+very same value definition as object 1000h.</value>
+      </property>
+      <property xml:id="DeviceType.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="ErrorRegister" valuetype="network">
+      <label>Error Register</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+      <behavior set="CANopen.bset" name="category.mandatory" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1001" access="ro" pdo="t" />
+      </protocol>
+      <property xml:id="ErrorRegister.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide error information. The CANopen device maps internal errors into this object. It
+is a part of an emergency object.
+If a specific error occurs the corresponding bit shall be set to 1b. The generic error bit (bit 0) shall be
+supported. The other bits may be supported. The generic error shall be signaled at any error
+situation.</value>
+      </property>
+    </property>
+    <property xml:id="ManufacturerStatusRegister" valuetype="network">
+      <label>Manufacturer Status Register</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1002" access="ro" pdo="t" />
+      </protocol>
+      <property xml:id="ManufacturerStatusRegister.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide a common status register for manufacturer-specific purposes. In this
+specification only the size and the location of this object are defined.</value>
+      </property>
+    </property>
+    <property xml:id="PredefinedErrorField" valuetype="NULL">
+      <label>Pre-defined Error Field</label>
+      <behavior set="CANopen.bset" name="deprecated" />
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <property xml:id="PredefinedErrorField.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide the errors that occurred on the CANopen device and were signaled via the
+emergency object. In doing so it provides an error history.</value>
+      </property>
+      <property xml:id="PredefinedErrorField.MaxSubIndex" valuetype="network">
+        <behavior set="CANopen.bset" name="deprecated" />
+        <behavior set="CANopen.bset" name="maxSubIndex" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1003" sub="0" access="rw" pdo="no" />
+        </protocol>
+        <property xml:id="PredefinedErrorField.MaxSubIndex.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="COBIDSync" valuetype="network">
+      <label>COB-ID Sync Message</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1005" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="COBIDSync.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured COB-ID of the synchronization object (SYNC). Further, it
+defines whether the CANopen device generates the SYNC (bit 30).</value>
+      </property>
+      <property xml:id="COBIDSync.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0x80000080</value>
+      </property>
+    </property>
+    <property xml:id="CommunicationCyclePeriod" valuetype="network">
+      <label>Communication Cycle Period</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1006" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="CommunicationCyclePeriod.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The communication cycle period defines the SYNC interval in [μs]. A value of 0 means transmission of SYNC messages is disabled.
+			The object is mandatory for SYNC producers.</value>
+      </property>
+      <property xml:id="CommunicationCyclePeriod.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0x00000000</value>
+      </property>
+    </property>
+    <property xml:id="SynchronousWindowLength" valuetype="network">
+      <label>Synchronous Window Length</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1007" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="SynchronousWindowLength.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured the length of the time window for synchronous PDOs in [μs].
+If the synchronous window length expires all synchronous TPDOs may be discarded and an EMCY
+message may be transmitted; all synchronous RPDOs may be discarded until the next SYNC
+message is received. Synchronous RPDO processing is resumed with the next SYNC message.
+A value of 0 means the synchronous window is disabled.</value>
+      </property>
+      <property xml:id="SynchronousWindowLength.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0x00000000</value>
+      </property>
+    </property>
+    <property xml:id="ManufacturerDeviceName" valuetype="network">
+      <label>Manufacturer Device Name</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.VISIBLE_STRING" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acnbase.bset" name="devModelName" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1008" access="const" pdo="no" />
+      </protocol>
+      <property xml:id="ManufacturerDeviceName.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide the name of the device as given by the manufacturer.</value>
+      </property>
+      <property xml:id="ManufacturerDeviceName.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="string">MyDevice</value>
+      </property>
+    </property>
+    <property xml:id="ManufacturerHardwareVersion" valuetype="network">
+      <label>Manufacturer Hardware Version</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.VISIBLE_STRING" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acnbase.bset" name="hardwareVersion" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1009" access="const" pdo="no" />
+      </protocol>
+      <property xml:id="ManufacturerHardwareVersion.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide the manufacturer hardware version description.</value>
+      </property>
+      <property xml:id="ManufacturerHardwareVersion.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="string">0.0</value>
+      </property>
+    </property>
+    <property xml:id="ManufacturerSoftwareVersion" valuetype="network">
+      <label>Manufacturer Software Version</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.VISIBLE_STRING" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acnbase.bset" name="softwareVersion" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x100A" access="const" pdo="no" />
+      </protocol>
+      <property xml:id="ManufacturerSoftwareVersion.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide the manufacturer software version description.</value>
+      </property>
+      <property xml:id="ManufacturerSoftwareVersion.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="string">0.0</value>
+      </property>
+    </property>
+    <property xml:id="GuardTime" valuetype="network">
+      <label>Guard Time</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="CANopen.bset" name="deprecated" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x100C" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="GuardTime.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The objects at index 100Ch and 100Dh shall indicate the configured guard time (in [ms]) respectively the life
+time factor. The life time factor multiplied with the guard time gives the life time for the life guarding protocol. Value 0 disables life guarding.
+Note that CiA 802 deprecates the node-guarding mechanism using Guard Time and Lifetime Factor in favour or the Heartbeat mechanism.</value>
+      </property>
+      <property xml:id="GuardTime.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="LifetimeFactor" valuetype="network">
+      <label>Lifetime Factor</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="CANopen.bset" name="deprecated" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x100D" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="LifetimeFactor.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The life time factor multiplied with the guard time gives the life time for the life guarding protocol.</value>
+      </property>
+      <property xml:id="LifetimeFactor.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="StoreParameters" valuetype="NULL">
+      <label>Store Parameters</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1010" />
+      </protocol>
+      <property xml:id="StoreParameters.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall control the saving of parameters in non-volatile memory.
+Writing 0x65766173 ('evas') to one of the sub-indces will save the corresponding parameters.
+On read, the device indicates whether automatic and/or manual save of these parameters is supported: bit 0 save on command, bit 1 automatic save.</value>
+      </property>
+      <property xml:id="StoreParameters.All" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1010" sub="1" />
+        </protocol>
+        <property xml:id="StoreParameters.All.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="StoreParameters.Communication" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1010" sub="2" />
+        </protocol>
+        <property xml:id="StoreParameters.Communication.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="StoreParameters.Application" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1010" sub="3" />
+        </protocol>
+        <property xml:id="StoreParameters.Application.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RestoreDefaultParameters" valuetype="NULL">
+      <label>Restore Default Parameters</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1011" />
+      </protocol>
+      <property xml:id="RestoreDefaultParameters.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall control the reset of parameters to their default value.
+Please note that a power cycle or NMT reset node or reset communication command is needed to activate the default settings.
+Writing 0x64616F6C ('daol') to one of the sub-indces will reset the corresponding parameters.
+On read, the device indicates with bit 0 whether reset of these parameters is supported.</value>
+      </property>
+      <property xml:id="RestoreDefaultParameters.All" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1011" sub="1" />
+        </protocol>
+        <property xml:id="RestoreDefaultParameters.All.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="RestoreDefaultParameters.Communication" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1011" sub="2" />
+        </protocol>
+        <property xml:id="RestoreDefaultParameters.Communication.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="RestoreDefaultParameters.Application" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1011" sub="3" />
+        </protocol>
+        <property xml:id="RestoreDefaultParameters.Application.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="COBIDTimestamp" valuetype="network">
+      <label>COB-ID Timestamp</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1012" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="COBIDTimestamp.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured COB-ID of the Time-Stamp Object (TIME). Further, it defines
+whether the CANopen device consumes the TIME (bit 31) or whether the CANopen device generates the TIME (bit 30).</value>
+      </property>
+      <property xml:id="COBIDTimestamp.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0x00000100</value>
+      </property>
+    </property>
+    <property xml:id="HighResolutionTimestamp" valuetype="network">
+      <label>High Resolution Timestamp</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1013" access="rw" pdo="tr" />
+      </protocol>
+      <property xml:id="HighResolutionTimestamp.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured high resolution timestamp (in [μs]). It may be mapped into a PDO.</value>
+      </property>
+      <property xml:id="HighResolutionTimestamp.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="COBIDEMCY" valuetype="network">
+      <label>COB-ID Emergency</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1014" />
+      </protocol>
+      <property xml:id="COBIDEMCY.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured COB-ID of the Emergency write service (EMCY). Further, it defines
+whether the CANopen EMCY is NOT valid / does NOT exist (bit 31).</value>
+      </property>
+      <property xml:id="COBIDEMCY.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0x00000080</value>
+      </property>
+    </property>
+    <property xml:id="InhibitTimeEMCY" valuetype="network">
+      <label>Inhibit Time Emergency</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1015" />
+      </protocol>
+      <property xml:id="InhibitTimeEMCY.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured inhibit time for the EMCY message (in [100 μs]). The value 0 disables the inhibit time.</value>
+      </property>
+      <property xml:id="InhibitTimeEMCY.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="ConsumerHeartbeatTime" array="1" valuetype="network">
+      <label>Consumer Heartbeat Time</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1016" />
+      </protocol>
+      <property xml:id="ConsumerHeartbeatTime.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The consumer heartbeat time object shall indicate the expected heartbeat cycle times (in [ms]). Monitoring of
+the heartbeat producer shall start after the reception of the first heartbeat. If the heartbeat time is 0 or the node-ID is 0 or greater than 127 the corresponding object entry shall be not used.</value>
+      </property>
+      <property xml:id="ConsumerHeartbeatTime.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="ProducerHeartbeatTime" valuetype="network">
+      <label>Producer Heartbeat Time</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1017" />
+      </protocol>
+      <property xml:id="ProducerHeartbeatTime.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The consumer heartbeat time object shall indicate the configured heartbeat cycle time (in [ms]). The value 0 disables the heartbeat.</value>
+      </property>
+      <property xml:id="ProducerHeartbeatTime.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="Identity" valuetype="NULL">
+      <label>Identity Object</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.mandatory" />
+      <behavior set="acnbase.bset" name="devInfoItem" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1018" />
+      </protocol>
+      <property xml:id="Identity.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide general identification information of the CANopen device.</value>
+      </property>
+      <property xml:id="Identity.VendorID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1018" sub="1" access="const" />
+        </protocol>
+        <property xml:id="Identity.VendorID.Description" valuetype="immediate">
+          <behavior set="acn.dms.bset" name="description" />
+          <value type="string">Assigned uniquely to manufacturers by CiA. (0 means invalid vendor-ID)</value>
+        </property>
+        <property xml:id="Identity.VendorID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="Identity.ProductCode" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1018" sub="2" access="ro" />
+        </protocol>
+        <property xml:id="Identity.ProductCode.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="Identity.RevisionNumber" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1018" sub="3" access="ro" />
+        </protocol>
+        <property xml:id="Identity.RevisionNumber.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="Identity.SerialNumber" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1018" sub="4" access="ro" />
+        </protocol>
+        <property xml:id="Identity.SerialNumber.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="SynchronousCounterOverflowValue" valuetype="network">
+      <label>Synchronous Counter Overflow Value</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1019" access="rw" pdo="no" />
+      </protocol>
+      <property xml:id="SynchronousCounterOverflowValue.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the configured highest value the synchronous counter supports. This object
+shall be implemented by the producer and the consumer, if the synchronous counter is supported by
+the CANopen device. If the value is greater than 1, the SYNC message shall have a data length of 1
+byte. The SYNC consumer shall ignore the value itself. An EMCY message (error code: 8240h –
+unexpected SYNC data length) may be transmitted by a SYNC consumer in the case the configured
+data length of the SYNC message does not meet the data length of a received SYNC message.</value>
+      </property>
+      <property xml:id="SynchronousCounterOverflowValue.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="VerifyConfiguration" valuetype="NULL">
+      <label>Verify Configuration</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1020" />
+      </protocol>
+      <property xml:id="VerifyConfiguration.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the downloaded configuration date and time. If a CANopen device supports
+the saving of parameters in non-volatile memory, a network configuration tool or a CANopen manager
+uses this object to verify the configuration after a CANopen device reset and to check if a
+reconfiguration is necessary. The configuration tool stores the date and time in that object and stores
+the same values in the DCF. Now the configuration tool lets the CANopen device save its
+configuration by writing to index 1010h sub-index 01h the signature "save". After a reset the CANopen
+device shall restore the last configuration and the signature automatically or by request. If any other
+command changes boot-up configuration values, the CANopen device shall reset the object Verify
+Configuration to 0.
+The Configuration Manager compares signature and configuration with the value from the DCF and
+decides if a reconfiguration is necessary or not.
+Note: The usage of this object allows a significant speed-up of the boot-up process. If it is used, the
+system integrator considers that an user changes a configuration value and afterwards activate
+the command store configuration 1010h without changing the value of 1020h. So the system
+integrator ensures a 100% consequent usage of this feature.</value>
+      </property>
+      <property xml:id="VerifyConfiguration.Date" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1020" sub="1" />
+        </protocol>
+        <property xml:id="VerifyConfiguration.Date.Description" valuetype="immediate">
+          <behavior set="acn.dms.bset" name="description" />
+          <value type="string">The number of days since January 1, 1984.</value>
+        </property>
+        <property xml:id="VerifyConfiguration.Date.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="VerifyConfiguration.Time" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1020" sub="2" />
+        </protocol>
+        <property xml:id="VerifyConfiguration.Time.Description" valuetype="immediate">
+          <behavior set="acn.dms.bset" name="description" />
+          <value type="string">The number of ms since midnight.</value>
+        </property>
+        <property xml:id="VerifyConfiguration.Time.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="StoreEDS" valuetype="network">
+      <label>Store EDS</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.DOMAIN" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acn.dms.bset" name="deprecated" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1021" access="rw" />
+      </protocol>
+      <property xml:id="StoreEDS.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the downloaded electronic data sheet (EDS).</value>
+      </property>
+      <property xml:id="StoreEDS.Comment" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="comment" />
+        <value type="string">This object is Reserved in CiA1301.</value>
+      </property>
+    </property>
+    <property xml:id="StoreEDSFormat" valuetype="network">
+      <label>Store EDS Format</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acn.dms.bset" name="deprecated" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1022" access="ro" />
+      </protocol>
+      <property xml:id="StoreEDSFormat.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall indicate the format of the (EDS) storage. The value 0 means Unicode text.</value>
+      </property>
+      <property xml:id="StoreEDSFormat.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+      <property xml:id="StoreEDSFormat.Comment" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="comment" />
+        <value type="string">This object is Reserved in CiA1301.</value>
+      </property>
+    </property>
+    <property xml:id="OSCommand" valuetype="NULL">
+      <label>OS Command</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1023" />
+      </protocol>
+      <property xml:id="OSCommand.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">The OS Command object shall be used as a command driven interface to programmable devices. The
+contents of the command are /ISO8859/ characters or binary and are completely manufacturer-specific.
+The host system puts the command into the object OS command.</value>
+      </property>
+      <property xml:id="OSCommand.Command" valuetype="network">
+        <behavior set="CANopen.bset" name="type.OCTET_STRING" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1023" sub="1" access="rw" pdo="no" />
+        </protocol>
+      </property>
+      <property xml:id="OSCommand.Status" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1023" sub="2" access="ro" pdo="no" />
+        </protocol>
+        <property xml:id="OSCommand.Status.Description" valuetype="immediate">
+          <behavior set="acn.dms.bset" name="description" />
+          <value type="string">00h - Command completed – no error – no reply
+01h - Command completed – no error – reply
+02h - Command completed – error – no reply
+03h - Command completed – error – reply
+04h - reserved
+: : : : :
+FEh - reserved
+FFh - Command executing</value>
+        </property>
+        <property xml:id="OSCommand.Status.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="OSCommand.Reply" valuetype="network">
+        <behavior set="CANopen.bset" name="type.OCTET_STRING" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1023" sub="3" access="ro" pdo="no" />
+        </protocol>
+      </property>
+    </property>
+    <property xml:id="OSCommandMode" valuetype="network">
+      <label>OS Command Mode</label>
+      <behavior set="CANopen.bset" name="ObjectCode.VAR" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1024" access="wo" pdo="no" />
+      </protocol>
+      <property xml:id="OSCommandMode.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall control the command execution in the application specific queue. It is intended that
+this object represent the most recent command of an application program specific queue.</value>
+      </property>
+      <property xml:id="OSCommandMode.Default" valuetype="immediate">
+        <behavior set="acnbase.bset" name="initializer" />
+        <value type="uint">0</value>
+      </property>
+    </property>
+    <property xml:id="OSDebugger" valuetype="NULL">
+      <label>OS Debugger Interface</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1025" />
+      </protocol>
+      <property xml:id="OSDebugger.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide the OS debugger interface. It is the binary command interface to the
+debugger agents of the programmable CANopen device. The contents of the commands are
+manufacturer-specific. This object enables the user to connect with a remote debugger.</value>
+      </property>
+      <property xml:id="OSDebugger.Command" valuetype="network">
+        <behavior set="CANopen.bset" name="type.OCTET_STRING" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1025" sub="1" access="rw" pdo="no" />
+        </protocol>
+      </property>
+      <property xml:id="OSDebugger.Status" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1025" sub="2" access="ro" pdo="no" />
+        </protocol>
+        <property xml:id="OSDebugger.Status.Description" valuetype="immediate">
+          <behavior set="acn.dms.bset" name="description" />
+          <value type="string">00h - Command completed – no error
+01h - Command completed – error
+FFh - Command executing</value>
+        </property>
+        <property xml:id="OSDebugger.Status.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+      <property xml:id="OSDebugger.Reply" valuetype="network">
+        <behavior set="CANopen.bset" name="type.OCTET_STRING" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1025" sub="3" access="ro" pdo="no" />
+        </protocol>
+      </property>
+    </property>
+    <property xml:id="OSPrompt" valuetype="NULL">
+      <label>OS Debugger Interface</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1026" />
+      </protocol>
+      <property xml:id="OSPrompt.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object shall provide the OS debugger interface. It is the binary command interface to the
+debugger agents of the programmable CANopen device. The contents of the commands are
+manufacturer-specific. This object enables the user to connect with a remote debugger.</value>
+      </property>
+      <property xml:id="OSPrompt.MaxSubIndex" valuetype="network">
+        <behavior set="CANopen.bset" name="maxSubIndex" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1026" sub="0" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="OSPrompt.MaxSubIndex.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">3</value>
+        </property>
+      </property>
+      <property xml:id="OSPrompt.StdIn" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1026" sub="1" access="wo" pdo="r" />
+        </protocol>
+      </property>
+      <property xml:id="OSPrompt.StdOut" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1026" sub="2" access="ro" pdo="t" />
+        </protocol>
+      </property>
+      <property xml:id="OSPrompt.StdErr" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.optional" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1026" sub="3" access="ro" pdo="t" />
+        </protocol>
+      </property>
+    </property>
+    <property xml:id="ModuleList" array="254" valuetype="network">
+      <label>OS Debugger Interface</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1027" access="ro" pdo="no" />
+      </protocol>
+      <property xml:id="ModuleList.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">A common method to provide modular CANopen devices is the usage of a bus coupler that allows
+connecting several combinations of modules. The object shall provide information on the currently attached modules.
+The consecutive sub-indexes (1 ≤ N ≤ 254) describe the corresponding modules in the order they
+are attached. Each object entry shall contain a number that identifies the module. For this the
+number shall be unique within all module types that are attached to this bus coupler device type.</value>
+      </property>
+      <property xml:id="ModuleList.MaxSubIndex" valuetype="network">
+        <behavior set="CANopen.bset" name="maxSubIndex" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1027" sub="0" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="ModuleList.MaxSubIndex.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="EmergencyConsumer" array="127" valuetype="network">
+      <label>Emergency Consumer</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1028" access="rw" />
+      </protocol>
+      <property xml:id="EmergencyConsumer.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This objects shall indicate the configured COB-IDs for the EMCY objects that the CANopen device is consuming.</value>
+      </property>
+      <property xml:id="EmergencyConsumer.MaxSubIndex" valuetype="network">
+        <behavior set="CANopen.bset" name="maxSubIndex" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1028" sub="0" access="const" />
+        </protocol>
+        <property xml:id="EmergencyConsumer.MaxSubIndex.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="ErrorBehavior" valuetype="NULL">
+      <label>Error Behavior</label>
+      <behavior set="CANopen.bset" name="ObjectCode.ARRAY" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1029" />
+      </protocol>
+      <property xml:id="ErrorBehavior.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">If a serious CANopen device failure is detected in NMT state Operational, the CANopen device shall
+enter by default autonomously the NMT state Pre-operational. If the ErrorBehavior object is implemented, the
+CANopen device is configurable to enter alternatively the NMT state Stopped or remain in the current
+NMT state. CANopen device failures shall include the following communication errors:
+• Bus-off conditions of the CAN interface
+• Life guarding event with the state ‘occurred’ and the reason 'time out'
+• Heartbeat event with state ‘occurred’ and the reason 'time out"
+Severe CANopen device errors also may be caused by CANopen device internal failures.</value>
+      </property>
+      <property xml:id="ErrorBehavior.CommunicationError" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1029" sub="1" />
+        </protocol>
+        <property xml:id="ErrorBehavior.CommunicationError.Description" valuetype="immediate">
+          <behavior set="acn.dms.bset" name="description" />
+          <value type="string">00h Change to NMT state Pre-operational
+(only if currently in NMT state Operational)
+01h No change of the NMT state
+02h Change to NMT state Stopped</value>
+        </property>
+        <property xml:id="ErrorBehavior.CommunicationError.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="SDO1Server" valuetype="NULL">
+      <label>SDO server parameter 1</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1200" />
+      </protocol>
+      <property xml:id="SDO1Server.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object contains the parameters of the basic CANopen SDO server function.</value>
+      </property>
+      <property xml:id="SDO1Server.COBIDClientServer" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1200" sub="1" access="const" pdo="tr" />
+        </protocol>
+        <property xml:id="SDO1Server.COBIDClientServer.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x600</value>
+        </property>
+      </property>
+      <property xml:id="SDO1Server.COBIDServerClient" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1200" sub="2" access="ro" pdo="tr" />
+        </protocol>
+        <property xml:id="SDO1Server.COBIDServerClient.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x580</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="SDO1Client" valuetype="NULL">
+      <label>SDO client parameter 1</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.optional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1280" />
+      </protocol>
+      <property xml:id="SDO1Client.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object contains the parameters of the first CANopen SDO client function.</value>
+      </property>
+      <property xml:id="SDO1Client.COBIDClientServer" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1280" sub="1" access="rw" pdo="tr" />
+        </protocol>
+        <property xml:id="SDO1Client.COBIDClientServer.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0x600</value>
+        </property>
+      </property>
+      <property xml:id="SDO1Client.COBIDServerClient" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1280" sub="2" access="rw" pdo="tr" />
+        </protocol>
+        <property xml:id="SDO1Client.COBIDServerClient.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0x580</value>
+        </property>
+      </property>
+      <property xml:id="SDO1Client.ServerNodeID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <behavior set="CANopen.bset" name="category.mandatory" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1280" sub="3" access="rw" pdo="no" />
+        </protocol>
+        <property xml:id="SDO1Client.COBIDServerClient.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">1</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO1.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1400" />
+      </protocol>
+      <property xml:id="RPDO1.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">Communication parameters of the first Receive Process Data Object (RPDO1) function.</value>
+      </property>
+      <property xml:id="RPDO1.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1400" sub="1" access="rw" />
+        </protocol>
+        <property xml:id="RPDO1.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x200</value>
+        </property>
+      </property>
+      <property xml:id="RPDO1.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1400" sub="2" access="rw" />
+        </protocol>
+        <property xml:id="RPDO1.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="RPDO1.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1400" sub="3" access="rw" />
+        </protocol>
+        <property xml:id="RPDO1.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO2.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1401" />
+      </protocol>
+      <property xml:id="RPDO2.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">Communication parameters of RPDO2.</value>
+      </property>
+      <property xml:id="RPDO2.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1401" sub="1" access="rw" />
+        </protocol>
+        <property xml:id="RPDO2.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x300</value>
+        </property>
+      </property>
+      <property xml:id="RPDO2.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1401" sub="2" access="rw" />
+        </protocol>
+        <property xml:id="RPDO2.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="RPDO2.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1401" sub="3" access="rw" />
+        </protocol>
+        <property xml:id="RPDO2.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO3.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1402" />
+      </protocol>
+      <property xml:id="RPDO3.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">Communication parameters of RPDO3.</value>
+      </property>
+      <property xml:id="RPDO3.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1402" sub="1" access="rw" />
+        </protocol>
+        <property xml:id="RPDO3.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x400</value>
+        </property>
+      </property>
+      <property xml:id="RPDO3.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1402" sub="2" access="rw" />
+        </protocol>
+        <property xml:id="RPDO3.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="RPDO3.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1402" sub="3" access="rw" />
+        </protocol>
+        <property xml:id="RPDO3.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO4.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1403" />
+      </protocol>
+      <property xml:id="RPDO4.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">Communication parameters of RPDO4.</value>
+      </property>
+      <property xml:id="RPDO4.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1403" sub="1" access="rw" />
+        </protocol>
+        <property xml:id="RPDO4.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x500</value>
+        </property>
+      </property>
+      <property xml:id="RPDO4.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1403" sub="2" access="rw" />
+        </protocol>
+        <property xml:id="RPDO4.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="RPDO4.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1403" sub="3" access="rw" />
+        </protocol>
+        <property xml:id="RPDO4.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO1.Mapping" valuetype="NULL">
+      <label>RPDO1 Mapped objects</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1600" />
+      </protocol>
+      <property xml:id="RPDO1.Mapping.MappedObject1" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1600" sub="1" />
+        </protocol>
+        <property xml:id="RPDO1.Mapping.MappedObject1.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO2.Mapping" valuetype="NULL">
+      <label>RPDO2 Mapped objects</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1601" />
+      </protocol>
+      <property xml:id="RPDO2.Mapping.MappedObject1" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1601" sub="1" />
+        </protocol>
+        <property xml:id="RPDO2.Mapping.MappedObject1.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO3.Mapping" valuetype="NULL">
+      <label>RPDO3 Mapped objects</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1602" />
+      </protocol>
+      <property xml:id="RPDO3.Mapping.MappedObject1" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1602" sub="1" />
+        </protocol>
+        <property xml:id="RPDO3.Mapping.MappedObject1.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="RPDO4.Mapping" valuetype="NULL">
+      <label>RPDO4 Mapped objects</label>
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1603" />
+      </protocol>
+      <property xml:id="RPDO4.Mapping.MappedObject1" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1603" sub="1" />
+        </protocol>
+        <property xml:id="RPDO4.Mapping.MappedObject1.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="TPDO1.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1800" />
+      </protocol>
+      <property xml:id="TPDO1.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object contains the parameters of the first CANopen TPDO function.</value>
+      </property>
+      <property xml:id="TPDO1.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1800" sub="1" access="const" />
+        </protocol>
+        <property xml:id="TPDO1.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x180</value>
+        </property>
+      </property>
+      <property xml:id="TPDO1.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1800" sub="2" access="const" />
+        </protocol>
+        <property xml:id="TPDO1.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="TPDO1.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1800" sub="3" access="const" />
+        </protocol>
+        <property xml:id="TPDO1.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="TPDO2.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1801" />
+      </protocol>
+      <property xml:id="TPDO2.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object contains the parameters of the second CANopen TPDO function.</value>
+      </property>
+      <property xml:id="TPDO2.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1801" sub="1" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO2.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x280</value>
+        </property>
+      </property>
+      <property xml:id="TPDO2.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1801" sub="2" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO2.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="TPDO2.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1801" sub="3" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO2.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="TPDO3.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1802" />
+      </protocol>
+      <property xml:id="TPDO3.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object contains the parameters of the third CANopen TPDO function.</value>
+      </property>
+      <property xml:id="TPDO3.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1802" sub="1" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO3.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x380</value>
+        </property>
+      </property>
+      <property xml:id="TPDO3.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1802" sub="2" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO3.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="TPDO3.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1802" sub="3" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO3.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="TPDO4.Communication" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <behavior set="acnbase.bset" name="constant" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1803" />
+      </protocol>
+      <property xml:id="TPDO4.Communication.Description" valuetype="immediate">
+        <behavior set="acn.dms.bset" name="description" />
+        <value type="string">This object contains the parameters of the fourth CANopen TPDO function.</value>
+      </property>
+      <property xml:id="TPDO4.Communication.COB_ID" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1803" sub="1" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO4.Communication.COB_ID.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="string">$NODEID+0x480</value>
+        </property>
+      </property>
+      <property xml:id="TPDO4.Communication.TransmissionType" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED8" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1803" sub="2" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO4.Communication.TransmissionType.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">254</value>
+        </property>
+      </property>
+      <property xml:id="TPDO4.Communication.InhibitTime" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED16" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1803" sub="3" access="const" pdo="no" />
+        </protocol>
+        <property xml:id="TPDO4.Communication.InhibitTime.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+    <property xml:id="TPDO1.Mapping" valuetype="NULL">
+      <behavior set="CANopen.bset" name="ObjectCode.RECORD" />
+      <behavior set="CANopen.bset" name="category.conditional" />
+      <protocol name="CANopen">
+        <cia:CANopen index="0x1A00" />
+      </protocol>
+      <property xml:id="TPDO1.Mapping.MappedObject1" valuetype="network">
+        <behavior set="CANopen.bset" name="type.UNSIGNED32" />
+        <protocol name="CANopen">
+          <cia:CANopen index="0x1A00" sub="1" />
+        </protocol>
+        <property xml:id="TPDO1.Mapping.MappedObject1.Default" valuetype="immediate">
+          <behavior set="acnbase.bset" name="initializer" />
+          <value type="uint">0</value>
+        </property>
+      </property>
+    </property>
+  </device>
+</DDL>

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
+<DDL version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/" xmlns:xlink="http://www.w3.org/1999/xlink">
+  <device xml:id="CANopen" date="2020-09-18" UUID="99b960da-5ac1-44fa-8624-eb711f6e80f0" provider="http://www.can-cia.org">
+    <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
+    <UUIDname UUID="99b960da-5ac1-44fa-8624-eb711f6e80f0" name="CANopen"/>
+    <UUIDname UUID="dc528311-650f-4b8c-ab55-788876392043" name="CANopen.bset"/>
+    <UUIDname UUID="c38e18e0-f9b9-4fb2-9dda-2d11ec7a163a" name="CANopen.lset"/>
+    <UUIDname UUID="5022b1ff-547d-4292-b24a-4813466374be" name="CANopen.301"/>
+    <UUIDname UUID="d65f3072-6b64-41a3-9ff4-f7dd0a699096" name="CANopen.302"/>
+    <UUIDname UUID="cac76fb4-eb02-4bd4-806a-74f5e2c963d8" name="CANopen.404"/>
+    <label set="CANopen.lset" key="CANopen"/>
+    <useprotocol name="CANopen"/>
+
+    <includedev xml:id="CiA301" UUID="CANopen.301">
+      <label set="CANopen.lset" key="CANopen.301"/>
+      <protocol name="CANopen"/>
+    </includedev>
+    <includedev xml:id="CiA302" UUID="CANopen.302">
+      <label set="CANopen.lset" key="CANopen.302"/>
+      <protocol name="CANopen"/>
+    </includedev>
+    <includedev xml:id="CiA404" UUID="CANopen.404">
+      <label set="CANopen.lset" key="CANopen.404"/>
+      <protocol name="CANopen"/>
+    </includedev>
+  </device>
+</DDL>
