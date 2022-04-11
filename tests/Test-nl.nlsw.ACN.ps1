@@ -9,7 +9,7 @@
  No output to the host
 
 .NOTES
- @date 2022-04-06
+ @date 2022-04-11
  @author Ernst van der Pols
 #>
 #
@@ -159,6 +159,98 @@ process {
 	$suite | test-case "`$device.provider == 'http://www.esta.org/ddl/draft/'" { $device.provider } "http://www.esta.org/ddl/draft/"
 	$suite | test-case "`$device.date == '2021-06-03'" { $device.date } "2021-06-03"
 	$suite | test-case "device invalid interface access (exception)" { $device.Properties[0].GetFormattedName() } ([System.Exception])
+
+	# test acn.ddl.Appliance
+	$appliance = $( $suite | test-case "`$appliance = `$device.GetAppliance()" { ,$device.GetAppliance() } ([acn.ddl.Appliance]) -passThru ).output
+	
+	# test acn.ddl.NodeIterator
+	$iterator = $( $suite | test-case "`$iterator = `$appliance.GetEnumerator()" { ,$appliance.GetEnumerator() } ([acn.ddl.NodeIterator]) -passThru ).output
+	$suite | test-case "`$iterator.root == `$appliance" { $appliance.Equals($iterator.root) } $true
+	$suite | test-case "`$iterator.rootNode == `$appliance" { $appliance.Equals($iterator.rootNode) } $true
+	$suite | test-case "`$iterator.currentNode == `$null" { $iterator.currentNode } $null
+	$suite | test-case "`$iterator.Current == `$null" { $iterator.Current } $null
+	$suite | test-case "`$iterator.referenceNode == `$appliance" { $appliance.Equals($iterator.referenceNode) } $true
+	$suite | test-case "`$iterator.filter == `$null" { $iterator.filter } $null
+	$suite | test-case "`$iterator.previousNode() == `$null" { $iterator.previousNode() } $null
+	# the first node must be the root node
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Appliance]) -passThru ).output
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Label]) -passThru ).output
+	$suite | test-case "`$node.key == 'device'" { $node.key } "device"
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.UseProtocol]) -passThru ).output
+	$suite | test-case "`$node.name == 'DMS'" { $node.name } "DMS"
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node.id == 'ANullProperty'" { $node.id } "ANullProperty"
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Label]) -passThru ).output
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node.id == 'AnImpliedProperty'" { $node.id } "AnImpliedProperty"
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Label]) -passThru ).output
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node.id == 'AnImmediateStringProperty'" { $node.id } "AnImmediateStringProperty"
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Label]) -passThru ).output
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Value]) -passThru ).output
+	$suite | test-case "`$node.Value == 'The (immediate) string value'" { $node.Value } "The (immediate) string value"
+	# and test moving backwards
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Value]) -passThru ).output
+	$suite | test-case "`$node == `$prev" { $prev.Equals($node) } $true
+	$suite | test-case "`$iterator.currentNode == `$prev" { $prev.Equals($iterator.currentNode) } $true
+	$suite | test-case "`$iterator.currentNode == `$iterator.referenceNode" { $iterator.referenceNode.Equals($iterator.currentNode) } $true
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Label]) -passThru ).output
+	$suite | test-case "`$prev.Value == 'A property with a string value in the description'" { $prev.Value } "A property with a string value in the description"
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$prev.id == 'AnImmediateStringProperty'" { $prev.id } "AnImmediateStringProperty"
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Label]) -passThru ).output
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Property]) -passThru ).output
+
+	# test acn.ddl.NodeIterator with filter
+	$filter = $( $suite | test-case "`$filter = [acn.ddl.NetworkPropertyFilter]::new()" { ,[acn.ddl.NetworkPropertyFilter]::new() } ([acn.ddl.INodeFilter]) -passThru ).output
+	$iterator = $( $suite | test-case "`$iterator = `$appliance.GetNodeIterator(`$filter)" { ,$appliance.GetNodeIterator($filter) } ([acn.ddl.NodeIterator]) -passThru ).output
+	$suite | test-case "`$iterator.root == `$appliance" { $appliance.Equals($iterator.root) } $true
+	$suite | test-case "`$iterator.rootNode == `$appliance" { $appliance.Equals($iterator.rootNode) } $true
+	$suite | test-case "`$iterator.currentNode == `$null" { $iterator.currentNode } $null
+	$suite | test-case "`$iterator.Current == `$null" { $iterator.Current } $null
+	$suite | test-case "`$iterator.filter == `$filter" { $filter.Equals($iterator.filter) } $true
+	$suite | test-case "`$iterator.previousNode() == `$null" { $iterator.previousNode() } $null
+	# the first node must be the root node (well, it could also be the first visible node, being a network property!
+	$node = $( $suite | test-case "`$node = `$iterator.nextNode()" { ,$iterator.nextNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$iterator.currentNode == `$node" { $node.Equals($iterator.currentNode) } $true
+	$suite | test-case "`$node.id == 'Constants'" { $node.id } "Constants"
+	$suite | test-case "`$node.valuetype == 'network'" { $node.valuetype } "network"
+	# test the IEnumerator<> interface of the iterator
+	$suite | test-case "`$iterator.MoveNext() == `$true" { $iterator.MoveNext() } $true
+	$node = $( $suite | test-case "`$iterator.Current is [acn.ddl.Property]" { $iterator.Current } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node.id == 'Constants2'" { $node.id } "Constants2"
+	$suite | test-case "`$node.valuetype == 'network'" { $node.valuetype } "network"
+	# and test moving backwards
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node == `$prev" { $prev.Equals($node) } $true
+	$suite | test-case "`$iterator.currentNode == `$prev" { $prev.Equals($iterator.currentNode) } $true
+	$suite | test-case "`$iterator.currentNode == `$iterator.referenceNode" { $iterator.referenceNode.Equals($iterator.currentNode) } $true
+	$suite | test-case "`$prev.id == 'Constants2'" { $prev.id } "Constants2"
+	$suite | test-case "`$prev.valuetype == 'network'" { $prev.valuetype } "network"
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$iterator.currentNode == `$prev" { $prev.Equals($iterator.currentNode) } $true
+	$suite | test-case "`$prev.id == 'Constants'" { $prev.id } "Constants"
+	$suite | test-case "`$prev.valuetype == 'network'" { $prev.valuetype } "network"
+	$suite | test-case "`$iterator.previousNode() == `$null" { $iterator.previousNode() } $null
+	
+	# count the (remaining) nodes
+	$suite | test-case "number of network properties in appliance == 24" { $count=0; while ($iterator.nextNode() -ne $null) { $count++}; $count } 24
+	$suite | test-case "`$iterator.nextNode() == `$null" { $iterator.nextNode() } $null
+	$suite | test-case "`$iterator.currentNode == `$null" { $iterator.currentNode } $null
+	$node = $( $suite | test-case "`$node = `$iterator.referenceNode" { ,$iterator.referenceNode } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node.id == 'AUInt64'" { $node.id } "AUInt64"
+	$suite | test-case "`$node.valuetype == 'network'" { $node.valuetype } "network"
+	$prev = $( $suite | test-case "`$prev = `$iterator.previousNode()" { ,$iterator.previousNode() } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node == `$prev" { $prev.Equals($node) } $true
+
+	# test the IEnumerator interface of the iterator
+	$suite | test-case "`$iterator.Reset(); `$iterator.referenceNode == `$appliance" { $iterator.Reset(); $appliance.Equals($iterator.referenceNode) } $true
+	$suite | test-case "`$iterator.Current == `$null" { $iterator.Current } $null
+	$suite | test-case "`$iterator.MoveNext() == `$true" { $iterator.MoveNext() } $true
+	$node = $( $suite | test-case "`$iterator.Current is [acn.ddl.Property]" { $iterator.Current } ([acn.ddl.Property]) -passThru ).output
+	$suite | test-case "`$node.id == 'Constants'" { $node.id } "Constants"
+	$suite | test-case "`$node.valuetype == 'network'" { $node.valuetype } "network"
+	$suite | test-case "`$iterator.Dispose(); `$iterator.MoveNext() [exception]" { $iterator.Dispose(); $iterator.MoveNext() } ([System.Exception])
 
 }
 end {

@@ -89,7 +89,7 @@ using nl.nlsw.Items;
 ///
 ///
 /// @author Ernst van der Pols
-/// @date 2022-03-29
+/// @date 2022-04-11
 /// @pre .NET Standard 2.0
 ///
 namespace acn.ddl {
@@ -420,12 +420,13 @@ namespace acn.ddl {
 	/// NodeIterator objects are used to step through a document tree or subtree in document order
 	/// using the view of the document defined by the optional filter.
 	///
-	/// This interface is based on a W3 Document Object Model Nodeiterator. The WhatToShow feature
-	/// is left-out.
+	/// This interface is based on a W3 Document Object Model NodeIterator, without the WhatToShow feature.
+	/// 
 	/// It also has an IEnumerator interface to support .NET foreach usage.
 	/// @see https://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html#Traversal-NodeIterator
+	/// @see https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerator-1
 	/// @see https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator
-	public interface INodeIterator : System.Collections.IEnumerator {
+	public interface INodeIterator : System.Collections.Generic.IEnumerator<Node> {
 
 		/// The root node of the NodeIterator, as specified when it was created.
 		Node root { get; }
@@ -433,7 +434,10 @@ namespace acn.ddl {
 		/// The filter used to hide nodes from the view.
 		INodeFilter filter { get; }
 
-		/// Detaches the NodeIterator from the set which it iterated over, releasing any computational resources and placing the iterator in the INVALID state. After detach has been invoked, calls to nextNode or previousNode will raise the exception INVALID_STATE_ERR.
+		/// Detaches the NodeIterator from the set which it iterated over,
+		/// releasing any computational resources and placing the iterator in the INVALID state.
+		/// After detach() has been invoked, calls to nextNode() or previousNode() will raise an InvalidOperationException.
+		/// This operation is called in the IDisposable.Dispose() operation.
 		void detach();
 
 		/// Returns the next node in the set and advances the position of the iterator in the set. After a NodeIterator is created, the first call to nextNode() returns the first node in the set.
@@ -450,8 +454,8 @@ namespace acn.ddl {
 
 	/// TreeWalker objects are used to navigate a document tree or subtree using the view of the document
 	/// defined by the optional filter. 
-	/// This class has the interface and behavior of a W3 Document Object Model TreeWalker.
-	/// The WhatToShow feature is left-out.
+	/// This class has the interface and behavior of a W3 Document Object Model TreeWalker,
+	/// without the WhatToShow feature.
 	/// @see https://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html#Traversal-TreeWalker
 	public interface ITreeWalker {
 
@@ -518,7 +522,7 @@ namespace acn.ddl {
 	/// the reason for using Property as base class is to have a single API for the
 	/// whole appliance tree and the regular properties of a device module.
 	///
-	public class Appliance : acn.ddl.Property {
+	public class Appliance : acn.ddl.Property, System.Collections.IEnumerable {
 		
 		private acn.ddl.Device _RootDevice = null;
 	
@@ -651,6 +655,14 @@ namespace acn.ddl {
 		/// Get the number of child nodes
 		public override int GetChildNodeCount() {
 			return base.GetChildNodeCount();
+		}
+
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+			return (System.Collections.IEnumerator)GetNodeIterator();
+		}
+
+		public NodeIterator GetNodeIterator(INodeFilter filter = null) {
+			return new NodeIterator(this,filter);
 		}
 	}
 
@@ -3671,72 +3683,123 @@ namespace acn.ddl {
 	}
 
 	/// A NodeIterator is used to enumerate a node tree in document order using the view
-	/// defined by WhatToShow and an optional filter.
+	/// defined by an optional filter.
 	///
-	/// This class has the interface and behavior of a W3 Document Object Model NodeIterator.
-	/// 
-	/// It also has an System.Collections.IEnumerator interface.
-	public class NodeIterator : acn.ddl.INodeIterator {
-		/// The root node of the tree
-		private Node _rootNode = null;
-		/// The current node of the iterator
-		private Node _currentNode = null;
+	/// This class has the interface and behavior of a W3 Document Object Model NodeIterator,
+	/// without the WhatToShow feature.
+	/// It also has an System.Collections.Generic.IEnumerator<Node> interface, providing support
+	/// for use in C# foreach loops.
+	public class NodeIterator : acn.ddl.INodeIterator, System.Collections.IEnumerable {
 		private INodeFilter _filter = null;
-		
-		/// Default constructor (needed?)
-		public NodeIterator() {
-		}
 		
 		/// Initializing constructor
 		public NodeIterator(Node root, INodeFilter filter = null) {
-			this._rootNode = root;
+			this.rootNode = root;
+			// position the iterator before the first node (root node)
+			this.currentNode = null;
+			this.referenceNode = rootNode;
+			// as if latest action was previousNode()
+			this.MovingForward = false;
 			this._filter = filter;
 		}
 
+		/// The 'current node' of the iterator, i.e. the last value returned by nextNode() or
+		/// previousNode(). Notice the difference between last node returned (= the referenceNode),
+		/// and last value returned (= currentNode), which may be null when begin or end
+		/// of the collection is reached.
+		/// When the iterator points in the collection, currentNode equals referenceNode.
+		public Node currentNode { get; protected set; }
+
+		/// Get the element in the collection at the current position of the enumerator.
+		/// Returns null if the enumerator is invalid or outside the collection.
+		/// @see https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerator-1.current
+		Node IEnumerator<acn.ddl.Node>.Current {
+			get {
+				return currentNode;
+			}
+		}
+
+		/// Get the element in the collection at the current position of the enumerator.
 		/// IEnumerator.Current
-		/// Get the element in the collection at the current position of the enumerator
 		/// @see https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator.current
 		/// @exception InvalidOperationException if the IEnumerator is not in the collection.
 		object IEnumerator.Current {
 			get {
-				if (_currentNode == null) {
+				if (currentNode == null) {
 					throw new InvalidOperationException("iterator is not in the collection");
 				}
-				return _currentNode;
+				return currentNode;
 			}
 		}
 
 		/// The filter used to hide nodes from the view.
 		public INodeFilter filter { get { return _filter; } }
 
+		/// Latest action was nextNode(), moving the referenceNode in forward direction.
+		protected bool MovingForward { get; set; }
+
+		/// The node that indicates the position of the iterator.
+		/// The position of a NodeIterator can best be described with respect to the last node returned,
+		/// which we will call the reference node. When an iterator is created, the first node is the reference node,
+		/// and the iterator is positioned before the reference node.
+		/// The referenceNode may be invisible, e.g. at initialisation, or when the referenceNode is removed
+		/// from the tree.
+		/// @see https://www.w3.org/TR/DOM-Level-2-Traversal-Range/traversal.html#Traversal-NodeIterator
+		public Node referenceNode { get; protected set; }
+
 		/// The root node of the iterator, as specified when it was created.
-		public Node root { get { return _rootNode; } }
+		Node INodeIterator.root { get { return rootNode; } }
+		
+		/// The root node of the iterator, as specified when it was created.
+		public Node rootNode { get; protected set; }
 
-		public void detach() {
-			this._rootNode = null;
+		/// Detaches the NodeIterator from the set which it iterated over,
+		/// releasing any computational resources and placing the iterator in the INVALID state.
+		/// After detach() has been invoked, calls to nextNode() or previousNode() will raise an InvalidOperationException.
+		void INodeIterator.detach() {
+			this.rootNode = null;
+			this.currentNode = null;
+			this.referenceNode = null;
         }
+		
+		/// Destruction of the object. It is invalidated.
+		void IDisposable.Dispose() {
+			((INodeIterator)this).detach();
+		}
 
-		/// IEnumerator.MoveNext()
+		/// In case this object is directly used in 'foreach', the GetEnumerator() operation is required.
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator() {
+			return (System.Collections.IEnumerator)this;
+		}
+
 		/// Advances the enumerator to the next element of the collection.
 		/// Enumerators are positioned before the first element until the first MoveNext() call.
-		/// This is emulated, since the TreeWalker is initialized on the first (root) node, so positioned on the 
+		/// IEnumerator.MoveNext()
+		///
 		/// @see https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator.movenext
 		/// @exception No InvalidOperationException if the collection was modified after the enumerator was created.
 		/// @return true if the enumerator was successfully advanced to the next element;
 		///    false if the enumerator has passed the end of the collection.
 		public bool MoveNext() {
-			return false;
+			Node next = nextNode();
+			return next != null;
 		}
 		
 		/// IEnumerator.Reset()
 		/// Sets the enumerator to its initial position, before the first element in the collection.
 		/// https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerator.reset
 		public void Reset() {
-			_currentNode = null;
+			currentNode = null;
+			referenceNode = rootNode;
+			// as if latest action was previousNode()
+			MovingForward = false;
 		}
 		
-		/// Check is the specified node is visible in the view of the TreeWalker
-		private NodeFilterResult isVisible(Node node) {
+		/// Check is the specified node is visible in the view of the iterator
+		/// @param node the node to evaluate
+		/// @return the result of the filter
+		/// @exception ArgumentNullException if node is null
+		protected NodeFilterResult isVisible(Node node) {
 			NodeFilterResult result = NodeFilterResult.FILTER_ACCEPT;
 			if (node == null) {
 				throw new ArgumentNullException("node");
@@ -3748,18 +3811,174 @@ namespace acn.ddl {
 			return result;
 		}
 
-		/// Returns the next node in the set and advances the position of the iterator in the set. After a NodeIterator is created, the first call to nextNode() returns the first node in the set.
+		/// Returns the next (visible) node in the set and advances the position of the iterator in the set.
+		/// After a NodeIterator is created, the first call to nextNode() returns the first node in the set.
 		/// @return The next Node in the set being iterated over, or null if there are no more members in that set.
 		/// @exception InvalidOperationException if this method is called after the detach method was invoked.
 		public Node nextNode() {
-			return null;
+			if (this.rootNode == null) {
+				throw new InvalidOperationException("NodeIterator has no root node");
+			}
+			if (referenceNode == null) {
+				// should never happen
+				referenceNode = rootNode;
+			}
+			// locate next visible node
+			Node parent = referenceNode;
+			int count = parent.GetChildNodeCount();
+			int index = 0;
+			if (!MovingForward) {
+				// change of direction: return the referenceNode (if visible)
+				MovingForward = true;
+				switch (isVisible(referenceNode)) {
+				case NodeFilterResult.FILTER_ACCEPT:
+					currentNode = referenceNode;
+					return currentNode;
+				case NodeFilterResult.FILTER_REJECT:
+					// ignore children of this node as well, proceed with next sibling of referenceNode
+					parent = referenceNode;
+					count = 0;
+					index = 0;
+					break;
+				case NodeFilterResult.FILTER_SKIP:
+					// this node is not shown, but its children might
+					parent = referenceNode;
+					count = parent.GetChildNodeCount();
+					index = 0;
+					break;
+				}
+			}
+			while (parent != null) {
+				// first locate first (visible) child
+				for (int i = index; i < count; i++) {
+					Node result = parent.GetChildNode(i);
+					switch (isVisible(result)) {
+					case NodeFilterResult.FILTER_ACCEPT:
+						referenceNode = result;
+						currentNode = referenceNode;
+						return currentNode;
+					case NodeFilterResult.FILTER_REJECT:
+						// ignore children of this node as well, proceed with next child
+						break;
+					case NodeFilterResult.FILTER_SKIP:
+						// this node is not shown, but its children might
+						parent = result;
+						count = parent.GetChildNodeCount();
+						// continue this loop counting from 0 with new parent
+						i = -1;
+						continue;
+					}
+				}
+				if ((parent == rootNode) || (parent.ParentNode == null)) {
+					// no more nodes
+					parent = null;
+				}
+				else {
+					// apparently no visible child found, try next sibling of the parent
+					index = parent.GetChildNodeIndex() + 1;
+					parent = parent.ParentNode;
+					count = parent.GetChildNodeCount();
+					for (int i = index; i < count; i++) {
+						Node result = parent.GetChildNode(i);
+						switch (isVisible(result)) {
+						case NodeFilterResult.FILTER_ACCEPT:
+							referenceNode = result;
+							currentNode = referenceNode;
+							return currentNode;
+						case NodeFilterResult.FILTER_REJECT:
+							// ignore children of this node as well, proceed with next sibling
+							break;
+						case NodeFilterResult.FILTER_SKIP:
+							// this node is not shown, but its children might
+							parent = result;
+							count = parent.GetChildNodeCount();
+							index = 0;
+							// break this for loop to proceed with the locate first (visible) child loop
+							i = count;
+							break;
+						}
+					}
+				}
+			}
+			currentNode = null;
+			return currentNode;
 		}
 
 		/// Returns the previous node in the set and moves the position of the NodeIterator backwards in the set.
 		/// @return The previous Node in the set being iterated over, or null if there are no more members in that set.
 		/// @exception InvalidOperationException if this method is called after the detach method was invoked.
 		public Node previousNode() {
-			return null;
+			if (this.rootNode == null) {
+				throw new InvalidOperationException("NodeIterator has no root node");
+			}
+			if (referenceNode == null) {
+				// should never happen
+				referenceNode = rootNode;
+			}
+			// determine 'currentNode'
+			currentNode = referenceNode;
+			if (MovingForward) {
+				// change of direction: return the referenceNode (if visible)
+				MovingForward = false;
+				switch (isVisible(currentNode)) {
+				case NodeFilterResult.FILTER_ACCEPT:
+					referenceNode = currentNode;
+					return currentNode;
+				case NodeFilterResult.FILTER_REJECT:
+				case NodeFilterResult.FILTER_SKIP:
+					// proceed with previous sibling of referenceNode
+					break;
+				}
+			}
+			// locate the previous visible node
+			while (currentNode != null) {
+				// find (last child of) previous sibling
+				if ((currentNode == rootNode) || (currentNode.ParentNode == null)) {
+					// no more nodes
+					currentNode = null;
+				}
+				else {
+					// get previous sibling of the currentNode
+					int index = currentNode.GetChildNodeIndex() - 1;
+					currentNode = currentNode.ParentNode;
+					if (index < 0) {
+						// no previous sibling of the 'previous' current node: check the node itself
+						switch (isVisible(currentNode)) {
+						case NodeFilterResult.FILTER_ACCEPT:
+							referenceNode = currentNode;
+							return currentNode;
+						case NodeFilterResult.FILTER_REJECT:
+						case NodeFilterResult.FILTER_SKIP:
+							// proceed with previous sibling of currentNode
+							continue;
+						}
+					}
+					while (index >= 0) {
+						// there is a previous sibling
+						currentNode = currentNode.GetChildNode(index);
+						// determine visibility of the (children of the) sibling
+						switch (isVisible(currentNode)) {
+						case NodeFilterResult.FILTER_REJECT:
+							// this node nor its children are shown, proceed with the previous sibling
+							index = -1;
+							break;
+						case NodeFilterResult.FILTER_ACCEPT:
+							index = currentNode.GetChildNodeCount() - 1;
+							if (index < 0) {
+								// no children, but node itself is visible: return that
+								referenceNode = currentNode;
+								return currentNode;
+							}
+							break;
+						case NodeFilterResult.FILTER_SKIP:
+							// test the last child of the currentNode
+							index = currentNode.GetChildNodeCount() - 1;
+							break;
+						}
+					}
+				}
+			}
+			return currentNode;
 		}
 	}
 
@@ -3810,6 +4029,8 @@ namespace acn.ddl {
 		public Node root { get { return _rootNode; } }
 
 		/// Check is the specified node is visible in the view of the TreeWalker
+		/// @param node the node to evaluate
+		/// @return the result of the filter
 		private NodeFilterResult isVisible(Node node) {
 			NodeFilterResult result = NodeFilterResult.FILTER_ACCEPT;
 			if (node == null) {
@@ -3972,53 +4193,48 @@ namespace acn.ddl {
 		/// @return The new node, or null if the current node has no previous node in the TreeWalker's logical view.
 		public Node previousNode() {
 			Node parent = currentNode;
-			int count = parent.GetChildNodeCount();
-			int index = 0;
 			while (parent != null) {
-				// first locate first (visible) child
-				for (int i = index; i < count; i++) {
-					Node result = parent.GetChildNode(i);
-					switch (isVisible(result)) {
-					case NodeFilterResult.FILTER_ACCEPT:
-						currentNode = result;
-						return result;
-					case NodeFilterResult.FILTER_REJECT:
-						// ignore children of this node as well, proceed with next child
-						break;
-					case NodeFilterResult.FILTER_SKIP:
-						// this node is not shown, but its children might
-						parent = result;
-						count = parent.GetChildNodeCount();
-						// continue this loop counting from 0 with new parent
-						i = -1;
-						continue;
-					}
-				}
+				// find (last child of) previous sibling
 				if ((parent == root) || (parent.ParentNode == null)) {
 					// no more nodes
 					parent = null;
 				}
 				else {
-					// apparently no visible child found, try next sibling of the parent
-					index = parent.GetChildNodeIndex() + 1;
+					// get previous sibling of the currentNode
+					int index = parent.GetChildNodeIndex() - 1;
 					parent = parent.ParentNode;
-					count = parent.GetChildNodeCount();
-					for (int i = index; index < count; i++) {
-						Node result = parent.GetChildNode(i);
-						switch (isVisible(result)) {
+					if (index < 0) {
+						// no previous sibling of the 'previous' current node: check the node itself
+						switch (isVisible(parent)) {
 						case NodeFilterResult.FILTER_ACCEPT:
-							currentNode = result;
-							return result;
+							currentNode = parent;
+							return parent;
 						case NodeFilterResult.FILTER_REJECT:
-							// ignore children of this node as well, proceed with next sibling
+						case NodeFilterResult.FILTER_SKIP:
+							// proceed with previous sibling of currentNode
+							continue;
+						}
+					}
+					while (index >= 0) {
+						// there is a previous sibling
+						parent = parent.GetChildNode(index);
+						// determine visibility of the (children of the) sibling
+						switch (isVisible(parent)) {
+						case NodeFilterResult.FILTER_REJECT:
+							// this node nor its children are shown, proceed with the previous sibling
+							index = -1;
+							break;
+						case NodeFilterResult.FILTER_ACCEPT:
+							index = parent.GetChildNodeCount() - 1;
+							if (index < 0) {
+								// no children, but node itself is visible: return that
+								currentNode = parent;
+								return currentNode;
+							}
 							break;
 						case NodeFilterResult.FILTER_SKIP:
-							// this node is not shown, but its children might
-							parent = result;
-							count = parent.GetChildNodeCount();
-							index = 0;
-							// break this for loop to proceed with the locate first (visible) child loop
-							i = count;
+							// test the last child of the currentNode
+							index = parent.GetChildNodeCount() - 1;
 							break;
 						}
 					}
