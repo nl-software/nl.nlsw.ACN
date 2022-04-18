@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <?xml-stylesheet href="../xsl/acn.ddl.xsl" type="text/xsl"?>
 <DDL xmlns:cia="https://www.can-cia.org/CANopen" xmlns:html="http://www.w3.org/1999/xhtml" version="1.1" xmlns="http://www.esta.org/acn/namespace/ddl/2008/">
-  <device xml:id="CANopen.301" date="2020-12-13" provider="http://www.can-cia.org" UUID="5022b1ff-547d-4292-b24a-4813466374be">
+  <device xml:id="CANopen.301" date="2022-04-18" provider="http://www.can-cia.org" UUID="5022b1ff-547d-4292-b24a-4813466374be">
     <UUIDname UUID="71576eac-e94a-11dc-b664-0017316c497d" name="acnbase.bset" />
     <UUIDname UUID="2f57532c-ce79-426e-92e1-13b05ce4e005" name="acn.dms.bset" />
     <UUIDname UUID="5022b1ff-547d-4292-b24a-4813466374be" name="CANopen.301" />
@@ -49,6 +49,7 @@ very same value definition as object 1000h.</value>
     </property>
     <property xml:id="ErrorRegister" valuetype="network">
       <label>Error Register</label>
+      <behavior set="acnbase.bset" name="trippable" />
       <behavior set="CANopen.bset" name="ObjectCode.VAR" />
       <behavior set="CANopen.bset" name="type.UNSIGNED8" />
       <behavior set="CANopen.bset" name="category.mandatory" />
@@ -66,6 +67,7 @@ situation.</value>
     </property>
     <property xml:id="ManufacturerStatusRegister" valuetype="network">
       <label>Manufacturer Status Register</label>
+      <behavior set="acnbase.bset" name="trippable" />
       <behavior set="CANopen.bset" name="ObjectCode.VAR" />
       <behavior set="CANopen.bset" name="type.UNSIGNED32" />
       <behavior set="CANopen.bset" name="category.optional" />
@@ -364,6 +366,7 @@ whether the CANopen device consumes the TIME (bit 31) or whether the CANopen dev
     </property>
     <property xml:id="HighResolutionTimestamp" valuetype="network">
       <label>High Resolution Timestamp</label>
+      <behavior set="acnbase.bset" name="volatile" />
       <behavior set="CANopen.bset" name="ObjectCode.VAR" />
       <behavior set="CANopen.bset" name="type.UNSIGNED32" />
       <behavior set="CANopen.bset" name="category.optional" />
