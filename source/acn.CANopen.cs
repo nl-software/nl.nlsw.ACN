@@ -31,144 +31,133 @@ using acn.dms;
 ///
 /// @see http://www.can-cia.org
 /// @author Ernst van der Pols
-/// @date 2022-04-01
+/// @date 2022-04-14
 /// @pre .NET Standard 2.0
 ///
 namespace acn.CANopen {
 
-	/// The data type of a device property
-	public class DataType {
-		/// the property that has this data type
-		private acn.ddl.Property _property;
+	/// A CANopen Electronic Data Sheet (EDS)
+	public class ElectronicDataSheet {
 
-		/// The behavior reference that specifies the data type of the property
-		private acn.ddl.BehaviorReference _dataTypeBehavior;
+		/// Translation table of CANopen EDS AccessType values to CANopen SDO and PDO access specifiers
+		public static OrderedDictionary AccessType = new OrderedDictionary() {
+			{ "ro",   new OrderedDictionary() { {"access", "ro"}, {"sdo","ro"}, {"pdo","t"} } },
+			{ "wo",   new OrderedDictionary() { {"access", "wo"}, {"sdo","wo"}, {"pdo","tr"} } },
+			{ "rw",   new OrderedDictionary() { {"access", "rw"}, {"sdo","rw"}, {"pdo","tr"} } },
+			{ "rwr",  new OrderedDictionary() { {"access", "rw"}, {"sdo","rw"}, {"pdo","t"} } },
+			{ "rww",  new OrderedDictionary() { {"access", "rw"}, {"sdo","rw"}, {"pdo","r"} } },
+			{ "const",new OrderedDictionary() { {"access", "const"}, {"sdo","ro"}, {"pdo","t"} } }
+			};
 
-		/// the TypeInfo of the data type
-		private acn.dms.TypeInfo _typeInfo = null;
-
-		/// the property that has this data type
-		public acn.ddl.Property Property { get { return _property; } }
-
-		/// the TypeInfo of the data type
-		public acn.dms.TypeInfo TypeInfo { get { return _typeInfo; } }
-
-		/// Create a data type object for the specified property
-		/// @exception ArgumentNullException if the property is null
-		/// @exception InvalidOperationException if the property has no data type specified
-		public DataType(acn.ddl.Property property) {
-			if (property == null) {
-				throw new ArgumentNullException("property");
+		/// To ease using the non-generic AccessType dictionary
+		/// @param acessType the EDS access type specifier
+		/// @param protocol the protocol to get the access specifier of, given the AccessType
+		/// @return the protocol access specifier, null if not present
+		public static string GetProtocolAccesByAccessType(string accessType, string protocol) {
+			OrderedDictionary dict = (OrderedDictionary)AccessType[accessType];
+			if (dict != null) {
+				return (string)dict[protocol];
 			}
-			_property = property;
-			_dataTypeBehavior = property.FindBehavior("acn.dms.bset", "type.");
-			if (_dataTypeBehavior == null) {
-				throw new InvalidOperationException(string.Format("no datatype found for property '{0}'",property.id));
-			}
-			string behavior = _dataTypeBehavior.ToString();
-			try {
-				_typeInfo = acn.dms.TypeInfo.GetTypeInfoByBehavior(behavior);
-			}
-			catch (Exception ex) {
-				throw new InvalidOperationException(string.Format("invalid or unsupported datatype behavior '{0}' of property '{1}'",behavior,property.id),ex);
-			}
+			return null;
 		}
-
-		/// Convert the specified string value to the datatype of the property.
-		/// @param value the value to convert
-		/// @return the converted value in the datatype of the property, null if
-		///   conversion is not possible
-		public object ConvertFromString(string value) {
-			object result = null;
-			if (value != null) {
-				try {
-					switch (this.TypeInfo.Code) {
-					case acn.dms.TypeCode.tcUInt8:
-					case acn.dms.TypeCode.tcEnum8:
-					case acn.dms.TypeCode.tcBitmap8:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToByte(value,16);
-						}
-						else {
-							result = System.Convert.ToByte(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcUInt16:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToUInt16(value,16);
-						}
-						else {
-							result = System.Convert.ToUInt16(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcUInt32:
-					case acn.dms.TypeCode.tcEnum32:
-					case acn.dms.TypeCode.tcBitmap32:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToUInt32(value,16);
-						}
-						else {
-							result = System.Convert.ToUInt16(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcUInt64:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToUInt64(value,16);
-						}
-						else {
-							result = System.Convert.ToUInt64(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcInt8:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToSByte(value,16);
-						}
-						else {
-							result = System.Convert.ToSByte(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcInt16:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToInt16(value,16);
-						}
-						else {
-							result = System.Convert.ToInt16(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcInt32:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToInt32(value,16);
-						}
-						else {
-							result = System.Convert.ToInt32(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcInt64:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
-							result = System.Convert.ToInt64(value,16);
-						}
-						else {
-							result = System.Convert.ToInt64(value);
-						}
-						break;
-					case acn.dms.TypeCode.tcFloat32:
-						result = System.Convert.ToSingle(value);
-						break;
-					case acn.dms.TypeCode.tcFloat64:
-						result = System.Convert.ToDouble(value);
-						break;
-					case acn.dms.TypeCode.tcString:
-						result = value;
-						break;
-					default:
-						throw new InvalidOperationException(string.Format("conversion to type {0} not implemented",this.TypeInfo.Name));
+		
+		/// Get the EDS AccessType of the specified CANopen protocol specification.
+		/// @param protocol the valid protocol object
+		/// @return the EDS AccessType
+		/// @exception InvalidOperationException if the protocol is null or not valid
+		public static string GetAccessType(acn.CANopen.Protocol protocol) {
+			if ((protocol == null) || !protocol.IsValid()) {
+				throw new InvalidOperationException("invalid or unspecified protocol object");
+			}
+			// EDS specific attributes
+			string result = protocol.Access;
+			if ((result == "ro") && protocol.IsConstant) {
+				result = "const";
+			}
+			switch (protocol.PDOAccess) {
+				case "t":
+					if (result == "rw") {
+						result = "rwr";
 					}
-				}
-				catch (Exception ex) {
-					throw new InvalidOperationException(string.Format("conversion of '{0}' to type {1} failed",value,this.TypeInfo.Name),ex);
-				}
+					break;
+				case "r":
+					if (result == "rw") {
+						result = "rww";
+					}
+					break;
 			}
 			return result;
+		}
+
+		/// Get the EDS PDOMapping of the specified CANopen protocol specification.
+		/// @param protocol the valid protocol object
+		/// @return the EDS PDOMapping
+		/// @exception InvalidOperationException if the protocol is null or not valid
+		public static string GetPDOMapping(acn.CANopen.Protocol protocol) {
+			if ((protocol == null) || !protocol.IsValid()) {
+				throw new InvalidOperationException("invalid or unspecified protocol object");
+			}
+			switch (protocol.PDOAccess) {
+				case "t":
+				case "r":
+				case "tr":
+					return "1";
+			}
+			return "0";
+		}
+	}
+
+	/// Utility class for CANopen object dictionary functions.
+	public class ObjectDictionary {
+		
+		/// Check whether the CANopen Object Dictionary index indicates a CANopen communication profile object
+		/// @param index the object dictionary index
+		/// @return true if the object is a communication profile object, false otherwise
+		public static bool IsCommunicationObject(int index) {
+			return (index >= 0x1000) && (index <= 0x1FFF);
+		}
+
+		/// Check whether the CANopen Object Dictionary index indicates a CANopen data object
+		/// @param index the object dictionary index
+		/// @return true if the object is not 0 or a CANopen type definition, false otherwise
+		public static bool IsDataObject(int index) {
+			return (index >= 0x1000);
+		}
+
+		/// Check whether the CANopen Object Dictionary index indicates a CANopen data type definition object
+		/// @note index 0x0000 is not used
+		/// @param index the object dictionary index
+		/// @return true if the object is a data type definition object, false otherwise
+		public static bool IsDataTypeObject(int index) {
+			return (index > 0x0000) && (index <= 0x0FFF);
+		}
+
+		/// Check whether the property indicates a mandatory CANopen object.
+		/// @param prop the property
+		/// @return true if the object is mandatory, false otherwise
+		public static bool IsMandatoryObject(acn.ddl.Property prop) {
+			return (prop != null) && prop.HasBehavior("CANopen.bset:category.mandatory");
+		}
+		
+		/// Check whether the CANopen Object Dictionary index indicates a manufacturer specific object
+		/// @param index the object dictionary index
+		/// @return true if the object is manufacturer specifc, false otherwise
+		public static bool IsManufacturerObject(int index) {
+			return (index >= 0x2000) && (index <= 0x5FFF);
+		}
+		
+		/// Check whether the CANopen Object Dictionary index indicates a CANopen object.
+		/// @param index the object dictionary index
+		/// @return true if the object is not 0, false otherwise
+		public static bool IsObject(int index) {
+			return (index > 0x0000);
+		}
+
+		/// Check whether the CANopen Object Dictionary index indicates a standard profile object
+		/// @param index the object dictionary index
+		/// @return true if the object is standard profile specifc, false otherwise
+		public static bool IsStandardProfileObject(int index) {
+			return (index >= 0x6000) && (index <= 0x9FFF);
 		}
 	}
 
@@ -187,6 +176,9 @@ namespace acn.CANopen {
 
 		/// The node number of the device on the CANopen bus
 		public byte NodeID { get; protected set;}
+		
+		/// A sub index is specified in the ProtocolElement
+		public bool HasSubIndex { get; set; }
 		
 		/// The CANopen Object Dictionary index of the property
 		public ushort Index { get; protected set; }
@@ -209,25 +201,74 @@ namespace acn.CANopen {
 		/// @param property the network property
 		/// @exception ArgumentNullException if the property is null
 		/// @exception InvalidOperationException if the property has no CANopen protocol specified.
-		public Protocol(acn.ddl.Property property) : base(property,acn.CANopen.Protocol.Definition)
+		public Protocol(acn.ddl.Property property)
+			: base(property,acn.CANopen.Protocol.Definition)
 		{
 			// get the attributes from the ProtocolElement
-			string node = GetAttribute("node");
+			string node = ProtocolElement.GetAttribute("node");
 			string index = GetAttribute("index");
-			string subIndex = GetAttribute("sub");
-			NodeID = (byte)acn.dms.TypeInfo.ConvertFromString(node,acn.dms.TypeInfo.UInt8);
+			string subIndex = ProtocolElement.GetAttribute("sub");
+			HasSubIndex = !string.IsNullOrEmpty(subIndex);
+			if (!HasSubIndex) {
+				if (Property.HasArray && (Property.ArrayIndex >= 0)) {
+					// expand array sub-index: assign the array-index + 1
+					subIndex = (Property.ArrayIndex + 1).ToString();
+				}
+				else {
+					// default value
+					subIndex = Definition.DefaultAttributes["sub"] as string;
+				}
+			}
+			// the node number is specified on CANopen element of the property or one of its ancestors, or in the CANopen.DCF.NodeID property
+			for (acn.ddl.Property prop = property; (prop != null) && string.IsNullOrEmpty(node); prop = prop.ParentNode as acn.ddl.Property) {
+				System.Xml.XmlElement element = GetProtocolElement(prop,ProtocolDefinition);
+				node = (element != null ? element.GetAttribute("node") : null);
+				if (string.IsNullOrEmpty(node)) {
+					acn.ddl.Property nodeIDProperty = prop.GetProperty("CANopen.DCF.NodeID");
+					if (nodeIDProperty != null) {
+						node = nodeIDProperty.GetValueString();
+					}
+				}
+			}
+			if (!string.IsNullOrEmpty(node)) {
+				NodeID = (byte)acn.dms.TypeInfo.ConvertFromString(node,acn.dms.TypeInfo.UInt8);
+			}
 			Index = (ushort)acn.dms.TypeInfo.ConvertFromString(index,acn.dms.TypeInfo.UInt16);
 			SubIndex = (byte)acn.dms.TypeInfo.ConvertFromString(subIndex,acn.dms.TypeInfo.UInt8);
-			SDOAccess = GetAttribute("access");
-			PDOAccess = GetAttribute("pdo");
-			
-			// quick fix
-			if (NodeID == 0) {
-				NodeID = 1;
+
+			// determine the (SDO) access
+			Access = ProtocolElement.GetAttribute("access");
+			if (string.IsNullOrEmpty(Access)) {
+				// default value of sdo access
+				Access = (IsConstant ? "ro" : "rw");
+			}
+			// translate deprecated 'const' value
+			if (Access == "const") {
+				Access = "ro";
+			}
+			// @todo do we support SDO access?
+			SDOAccess = ProtocolElement.GetAttribute("sdo");
+			if (string.IsNullOrEmpty(SDOAccess)) {
+				SDOAccess = acn.CANopen.ElectronicDataSheet.GetProtocolAccesByAccessType(Access,"sdo");
+			}
+
+			// determine the PDO access
+			PDOAccess = ProtocolElement.GetAttribute("pdo");
+			if (string.IsNullOrEmpty(PDOAccess)) {
+				acn.ddl.BehaviorReference behavior = Property.FindBehavior("CANopen.bset","pdo.");
+				if (behavior != null) {
+					// delete the 'pdo.' part of the behavior name
+					PDOAccess = behavior.name.Replace("tpo.","");
+				}
+			}
+			if (string.IsNullOrEmpty(PDOAccess)) {
+				// default value
+				PDOAccess = Definition.DefaultAttributes["pdo"] as string;
 			}
 		}
 		
 		/// Try to get the CANopen protocol attributes of the specified property
+		/// @param property the property to get the protocol of
 		/// @return the CANopen protocol attributes or null if not available
 		public static Protocol GetProtocol(acn.ddl.Property property) {
 			Protocol result = null;
@@ -239,10 +280,40 @@ namespace acn.CANopen {
 			}
 			return result;
 		}
+
+		/// Get the CANopen ObjectCode behavior for the related property.
+		/// @return the ObjectCode represented as behavior identifier.
+		public string GetCANopenObjectCode() {
+			acn.ddl.BehaviorReference behavior = this.Property.FindBehavior("CANopen.bset","ObjectCode.");
+			if (behavior == null) {
+				// no objecttype, use default
+				return "CANopen.bset:ObjectCode.VAR";
+			}
+			return behavior.ToString();
+		}
+
+		/// Get the key for sorting the property in the list of 'protocol properties'.
+		public override string GetSortingKey() {
+			if (IsValid()) {
+			//	if (($index -lt 0x0000) -or ($index -gt 0xFFFF)) {
+			//		throw [ArgumentException]::new("invalid CANopen object index value: $index","index")
+			//	}
+			//	if ($subIndex) {
+			//		[int]$sub = $subIndex
+			//		if (($sub -lt 0) -or ($sub -gt 255)) {
+			//			throw [ArgumentException]::new("invalid CANopen object sub-index value: $sub","subIndex")
+			//		}
+			//		return "{0:X2}:{1:X4}:{2:X2}" -f $nodeID,$index,$sub
+			//	}
+			//	return "{0:X2}:{1:X4}:  " -f $nodeID,$index
+				return string.Format("{0:X2}:{1:X4}:{2:X2}",NodeID,Index,SubIndex);
+			}
+			return null;
+		}
 		
-		/// Determine the CANopen NodeID of the specified property.
-		public static byte GetCANopenNodeID(acn.ddl.Property property) {
-			return 0;
+		/// Check if the CANopen object is a data object (and not a data type object).
+		public bool IsCANopenDataObject() {
+			return acn.CANopen.ObjectDictionary.IsDataObject(Index);
 		}
 	}
 }

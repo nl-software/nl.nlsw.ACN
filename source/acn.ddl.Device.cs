@@ -89,7 +89,7 @@ using nl.nlsw.Items;
 ///
 ///
 /// @author Ernst van der Pols
-/// @date 2022-04-11
+/// @date 2022-04-15
 /// @pre .NET Standard 2.0
 ///
 namespace acn.ddl {
@@ -1180,8 +1180,7 @@ namespace acn.ddl {
 		}
 		
 		/// Get the appliance of this device.
-		/// Returns the cached appliance or builds the appliance if not build yet.
-		/// @return the 
+		/// @return the cached appliance or builds the appliance if not build yet.
 		public acn.ddl.Appliance GetAppliance() {
 			if (Appliance == null) {
 				Appliance = new acn.ddl.Appliance(this);
@@ -2650,6 +2649,14 @@ namespace acn.ddl {
 		public static bool Nested = false;
 		private LabeledArrayElement _Definition = null;
 		
+		public const int InvalidArrayIndex = -1;
+
+		/// The array index of the property.
+		/// This property is used in an appliance property that HasArray, when iterating
+		/// through the array.
+		[System.Xml.Serialization.XmlIgnoreAttribute()]
+		public int ArrayIndex { get; set; }
+
 		/// The defining declaration of the property.
 		/// By default, the defining declaration of a property is the property itself.
 		/// In case of an appliance property, the defining declaration is the property (or includedev) i
@@ -2667,8 +2674,9 @@ namespace acn.ddl {
 		public Property(string id, acn.ddl.PropertyValueType type, string label = null) : base(id, label) {
             this.sharedefineField = PropertyShareDefine.@false;
 			this.valuetype = type;
+			this.ArrayIndex = InvalidArrayIndex;
 		}
-		
+
 		/// Conditionally, add the specified Behavior to the property.
 		/// If the behavior is already specified, but should be absent, an exception is raised.
 		/// @param qname the qualified name of the behavior
@@ -3131,6 +3139,11 @@ namespace acn.ddl {
 			return false;
 		}
 		
+		/// Test whether the property has a constant value.
+		public bool HasConstantValue() {
+			return HasBehavior("acnbase.bset","constant");
+		}
+
 		/// Test whether the property is a property with immediate valuetype.
 		public bool HasImmediateValue() {
 			return (valuetype == acn.ddl.PropertyValueType.immediate);
@@ -3144,6 +3157,21 @@ namespace acn.ddl {
 		/// Test whether the property is a property with network valuetype.
 		public bool HasNetworkValue() {
 			return (valuetype == acn.ddl.PropertyValueType.network);
+		}
+
+		/// Test whether the property is a property with NULL valuetype.
+		public bool HasNullValue() {
+			return (valuetype == acn.ddl.PropertyValueType.NULL);
+		}
+
+		/// Test whether the property has a persistent value.
+		public bool HasPersistentValue() {
+			return HasBehavior("acnbase.bset","persistent");
+		}
+
+		/// Test whether the property has a volatile value.
+		public bool HasVolatileValue() {
+			return HasBehavior("acnbase.bset","volatile");
 		}
 
 		/// Test whether the property is a compound property.
@@ -3179,6 +3207,8 @@ namespace acn.ddl {
 			UpdateChildNodesIn(protocolField);
 			UpdateChildNodesIn(valueField);
 			UpdateChildNodesIn(itemsField);
+			// update of Property after load needed (@todo rename UpdateChildNodes())
+			this.ArrayIndex = InvalidArrayIndex;
 		}
 	}
 

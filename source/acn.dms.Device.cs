@@ -39,7 +39,7 @@ using acn.ddl;
 ///   Provides information for mapping ACN DMS data types to native types.
 ///
 /// @author Ernst van der Pols
-/// @date 2022-04-01
+/// @date 2022-04-14
 /// @pre .NET Standard 2.0
 ///
 namespace acn.dms {
@@ -93,6 +93,99 @@ namespace acn.dms {
 
 	/// A base class for the protocol attributes of a device property.
 	public class Protocol {
+		/// Cached initial value of the property
+		private string _InitialValue;
+		/// Cached label string of the property
+		private string _Label;
+		/// The language of the cached label string.
+		private string _Language;
+		/// Cached maximum value of the numerical property
+		private string _LimitMax;
+		/// Cached minimum value of the numerical property
+		private string _LimitMin;
+
+		/// The protocol read/write access specifier for the property.
+		/// The default implementation assumes an 'r' for read access and a 'w' for write access.
+		public string Access { get; protected set; }
+
+		/// The data size (maximum number of bytes) of the value of the property.
+		public uint DataSize { get; protected set; }
+
+		/// The data type of the property.
+		public acn.dms.DataType DataType { get; protected set; }
+
+		/// Get the initial value of the property
+		/// @return the initial value, null if not available
+		public object InitialValue {
+			get {
+				if (_InitialValue == null) {
+					acn.ddl.Property initializer = Property.GetPropertyWithBehavior("acnbase.bset:initializer");
+					if (initializer != null) {
+						_InitialValue = initializer.GetValueString(Property.ArrayIndex);
+					}
+				}
+				return _InitialValue;
+			}
+		}
+
+		/// Test if the property value is constant
+		public bool IsConstant { get; protected set; }
+
+		/// Get the maximum value of the property
+		/// @return the maximum value, null if not available
+		public string LimitMax {
+			get {
+				if (_LimitMax == null) {
+					acn.ddl.Property max = Property.GetPropertyWithBehavior("acnbase.bset:limitMaxInc");
+					if (max != null) {
+						_LimitMax = max.GetValueString(Property.ArrayIndex);
+					}
+				}
+				return _LimitMax;
+			}
+		}
+
+		/// Get the minimum value of the property
+		/// @return the minimum value, null if not available
+		public string LimitMin {
+			get {
+				if (_LimitMin == null) {
+					acn.ddl.Property min = Property.GetPropertyWithBehavior("acnbase.bset:limitMinInc");
+					if (min != null) {
+						_LimitMin = min.GetValueString(Property.ArrayIndex);
+					}
+				}
+				return _LimitMin;
+			}
+		}
+
+		/// The maximum value of the (numerical) property.
+		public object MaxValue {
+			get {
+				if (LimitMax != null) {
+					return DataType.ConvertFromString(LimitMax);
+				}
+				if (DataType.TypeInfo.IsNumber) {
+					return DataType.TypeInfo.MaxValue;
+				}
+				// by default return a number
+				return 0;
+			}
+		}
+
+		/// The minimum value of the (numerical) property.
+		public object MinValue {
+			get {
+				if (LimitMin != null) {
+					return DataType.ConvertFromString(LimitMin);
+				}
+				if (DataType.TypeInfo.IsNumber) {
+					return DataType.TypeInfo.MinValue;
+				}
+				// by default return a number
+				return 0;
+			}
+		}
 
 		/// The device property that has this protocol
 		public acn.ddl.Property Property { get; protected set; }
@@ -103,34 +196,59 @@ namespace acn.dms {
 		/// The Protocol XmlElement node with the protocol attributes
 		public System.Xml.XmlElement ProtocolElement { get; protected set; }
 
-		/// The Protocol node of the property
-		public acn.ddl.Protocol ProtocolNode { get; protected set; }
-
 		/// Create a protocol object with the specified definition for the specified property.
 		/// @param property the network property
 		/// @param protocol the protocol definition
-		/// @exception ArgumentNullException if the property is null
+		/// @exception ArgumentNullException if the property or protocol is null
 		/// @exception InvalidOperationException if the property has no CANopen protocol or protocol attributes specified.
 		public Protocol(acn.ddl.Property property, acn.dms.ProtocolDefinition protocol) {
-			if (property == null) {
-				throw new ArgumentNullException("property");
-			}
 			this.Property = property;
-			if (protocol == null) {
-				throw new ArgumentNullException("protocol");
-			}
 			this.ProtocolDefinition = protocol;
 			// try to get the protocol node
-			ProtocolNode = property.GetProtocol(protocol.Name);
-			if (ProtocolNode == null) {
-				throw new InvalidOperationException(string.Format("property '{0}' has no protocol '{1}'",property.id,protocol.Name));
-			}
-			ProtocolElement = ProtocolNode.GetElement(protocol.QName);
+			ProtocolElement = GetProtocolElement(property,protocol);
 			if (ProtocolElement == null) {
-				throw new InvalidOperationException(string.Format("property '{0}' has protocol '{1}' without atributes element '{2}'",property.id,protocol.Name,protocol.QName));
+				throw new InvalidOperationException(string.Format("property '{0}' has no valid protocol '{1}' with atributes element '{2}'",property.id,protocol.Name,protocol.QName));
+			}
+			IsConstant = property.HasConstantValue();
+			if (!property.HasNullValue()) {
+				// determine the data tyoe
+				this.DataType = new acn.dms.DataType(property);
+				// determine the data size
+				if (this.DataType.TypeInfo.HasVariableSize) {
+					if (this.DataType.TypeInfo.IsString) {
+						acn.ddl.Property maxcodeunits = property.GetPropertyWithBehavior("acn.dms.bset:limitMaxCodeUnits");
+						if (maxcodeunits != null) {
+							this.DataSize = (uint)acn.dms.TypeInfo.ConvertFromString(maxcodeunits.GetValueString(),acn.dms.TypeInfo.UInt32);
+						}
+						else {
+							// MaxCodeUnits might be omitted in case of constant strings: the length of the default value is the size
+							// if a const with initializer: use length of initializer as size
+							acn.ddl.Property initial = property.GetPropertyWithBehavior("acnbase.bset:initializer");
+							if ((initial != null) && property.HasConstantValue()) {
+								string value = initial.GetValueString();
+								if (string.IsNullOrEmpty(value)) {
+									this.DataSize = 0;
+								}
+								else {
+									this.DataSize = (uint)System.Text.Encoding.UTF8.GetBytes(value).Length;
+								}
+							}
+							else {
+								throw new InvalidOperationException(string.Format("MaxCodeUnits not specified on string property '{0}'",property.id));
+							}
+						}
+					}
+					else {
+						// type tcObject, not supported yet
+						throw new NotImplementedException("variable sized tcObject type not implemented yet");
+					}
+				}
+				else {
+					this.DataSize = this.DataType.TypeInfo.Size;
+				}
 			}
 		}
-		
+
 		/// Get the protocol attribute with the specified name.
 		/// @param name the name of the attribute
 		/// @return the attribute value (as string), or null if the (default value of the) attribute is not found
@@ -141,6 +259,71 @@ namespace acn.dms {
 				result = ProtocolDefinition.DefaultAttributes[name].ToString();
 			}
 			return result;
+		}
+
+		/// Get the label text of the property.
+		/// @param language optional language specifier
+		/// @todo handle generic acnbase.bset:label sub-properties for retrieving dynamic labels
+		/// @return the label text, null if not available
+		public string GetLabel(string language = null) {
+			if ((_Label == null) || (string.CompareOrdinal(language,_Language) != 0)) {
+				acn.ddl.Property prop = Property.GetPropertyWithBehavior("acnbase.bset:labelString");
+				if (prop != null) {
+					_Label = prop.GetValueString(Property.ArrayIndex);
+					_Language = null;
+				}
+				if (_Label == null) {
+					_Label = Property.GetLabelText(language);
+					_Language = language;
+				}
+			}
+			return _Label;
+		}
+
+		/// Try to get the protocol element on the specified property or the specified protocol.
+		/// @paraam property the property to get the protocol on
+		/// @param protocol the protocol to get
+		/// @return the protocol element or null of not found
+		/// @exception ArgumentNullException if the property or protocol is null
+		public static System.Xml.XmlElement GetProtocolElement(acn.ddl.Property property, acn.dms.ProtocolDefinition protocol) {
+			if (property == null) {
+				throw new ArgumentNullException("property");
+			}
+			if (protocol == null) {
+				throw new ArgumentNullException("protocol");
+			}
+			// try to get the protocol node
+			acn.ddl.Protocol protocolNode = property.GetProtocol(protocol.Name);
+			if (protocolNode != null) {
+				System.Xml.XmlElement result = protocolNode.GetElement(protocol.QName,property.ArrayIndex);
+				if ((result == null) && (property.ArrayIndex > 0)) {
+					// single attribute element (we guess), return that
+					result = protocolNode.GetElement(protocol.QName,0);
+				}
+				return result;
+			}
+			return null;
+		}
+
+		/// Get the key for sorting the property in the list of 'protocol properties'.
+		/// By default the property.id is used
+		public virtual string GetSortingKey() {
+			return Property.id;
+		}
+
+		/// Check if the property has read access via the protocol.
+		public virtual bool HasReadAccess() {
+			return !string.IsNullOrEmpty(Access) && (Access.IndexOf('r') >= 0);
+		}
+
+		/// Check if the property has write access via the protocol.
+		public virtual bool HasWriteAccess() {
+			return !string.IsNullOrEmpty(Access) && (Access.IndexOf('w') >= 0);
+		}
+
+		/// Check if the protocol specification is valid
+		public virtual bool IsValid() {
+			return (Property != null) && (ProtocolElement != null);
 		}
 	}
 
@@ -273,6 +456,7 @@ namespace acn.dms {
 
 		/// The number of bytes of an object with this data type.
 		/// @note 0 means the type has a variable size
+		/// @note The definition relies on the .NET type sizes.
 		public uint Size { get; set; }
 		
 		/// The minimum value of the numerical data type
@@ -358,7 +542,9 @@ namespace acn.dms {
 			Code = TypeCode.tcFloat32,
 			Name = "float32",
 			Type = typeof(float),
-			Size = sizeof(float)
+			Size = sizeof(float),
+			MinValue = System.Single.MinValue,
+			MaxValue = System.Single.MaxValue
 		};
 
 		/// Double-precision floating-point number 64-bit data type.
@@ -368,7 +554,9 @@ namespace acn.dms {
 			Code = TypeCode.tcFloat64,
 			Name = "float64",
 			Type = typeof(double),
-			Size = sizeof(double)
+			Size = sizeof(double),
+			MinValue = System.Double.MinValue,
+			MaxValue = System.Double.MaxValue
 		};
 
 		/// Signed integer 8-bit data type.
@@ -378,7 +566,9 @@ namespace acn.dms {
 			Code = TypeCode.tcInt8,
 			Name = "int8",
 			Type = typeof(sbyte),
-			Size = sizeof(sbyte)
+			Size = sizeof(sbyte),
+			MinValue = System.SByte.MinValue,
+			MaxValue = System.SByte.MaxValue
 		};
 
 		/// Signed integer 16-bit data type.
@@ -388,7 +578,9 @@ namespace acn.dms {
 			Code = TypeCode.tcInt16,
 			Name = "int16",
 			Type = typeof(short),
-			Size = sizeof(short)
+			Size = sizeof(short),
+			MinValue = System.Int16.MinValue,
+			MaxValue = System.Int16.MaxValue
 		};
 
 		/// Signed integer 32-bit data type.
@@ -398,7 +590,9 @@ namespace acn.dms {
 			Code = TypeCode.tcInt32,
 			Name = "int32",
 			Type = typeof(int),
-			Size = sizeof(int)
+			Size = sizeof(int),
+			MinValue = System.Int32.MinValue,
+			MaxValue = System.Int32.MaxValue
 		};
 
 		/// Signed integer 64-bit data type.
@@ -408,7 +602,9 @@ namespace acn.dms {
 			Code = TypeCode.tcInt64,
 			Name = "int64",
 			Type = typeof(long),
-			Size = sizeof(long)
+			Size = sizeof(long),
+			MinValue = System.Int64.MinValue,
+			MaxValue = System.Int64.MaxValue
 		};
 
 		/// A binary object.
@@ -438,7 +634,9 @@ namespace acn.dms {
 			Code = TypeCode.tcUInt8,
 			Name = "uint8",
 			Type = typeof(byte),
-			Size = sizeof(byte)
+			Size = sizeof(byte),
+			MinValue = System.Byte.MinValue,
+			MaxValue = System.Byte.MaxValue
 		};
 
 		/// Unsigned integer 16-bit data type.
@@ -448,7 +646,9 @@ namespace acn.dms {
 			Code = TypeCode.tcUInt16,
 			Name = "uint16",
 			Type = typeof(ushort),
-			Size = sizeof(ushort)
+			Size = sizeof(ushort),
+			MinValue = System.UInt16.MinValue,
+			MaxValue = System.UInt16.MaxValue
 		};
 
 		/// Unsigned integer 32-bit data type.
@@ -458,7 +658,9 @@ namespace acn.dms {
 			Code = TypeCode.tcUInt32,
 			Name = "uint32",
 			Type = typeof(uint),
-			Size = sizeof(uint)
+			Size = sizeof(uint),
+			MinValue = System.UInt32.MinValue,
+			MaxValue = System.UInt32.MaxValue
 		};
 
 		/// Unsigned integer 64-bit data type.
@@ -468,7 +670,9 @@ namespace acn.dms {
 			Code = TypeCode.tcUInt64,
 			Name = "uint64",
 			Type = typeof(ulong),
-			Size = sizeof(ulong)
+			Size = sizeof(ulong),
+			MinValue = System.UInt64.MinValue,
+			MaxValue = System.UInt64.MaxValue
 		};
 
 		/// Map from behavior identifier to TypeInfo
@@ -505,7 +709,7 @@ namespace acn.dms {
 					case acn.dms.TypeCode.tcUInt8:
 					case acn.dms.TypeCode.tcEnum8:
 					case acn.dms.TypeCode.tcBitmap8:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToByte(value,16);
 						}
 						else {
@@ -513,7 +717,7 @@ namespace acn.dms {
 						}
 						break;
 					case acn.dms.TypeCode.tcUInt16:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToUInt16(value,16);
 						}
 						else {
@@ -523,7 +727,7 @@ namespace acn.dms {
 					case acn.dms.TypeCode.tcUInt32:
 					case acn.dms.TypeCode.tcEnum32:
 					case acn.dms.TypeCode.tcBitmap32:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToUInt32(value,16);
 						}
 						else {
@@ -531,7 +735,7 @@ namespace acn.dms {
 						}
 						break;
 					case acn.dms.TypeCode.tcUInt64:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToUInt64(value,16);
 						}
 						else {
@@ -539,7 +743,7 @@ namespace acn.dms {
 						}
 						break;
 					case acn.dms.TypeCode.tcInt8:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToSByte(value,16);
 						}
 						else {
@@ -547,7 +751,7 @@ namespace acn.dms {
 						}
 						break;
 					case acn.dms.TypeCode.tcInt16:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToInt16(value,16);
 						}
 						else {
@@ -555,7 +759,7 @@ namespace acn.dms {
 						}
 						break;
 					case acn.dms.TypeCode.tcInt32:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToInt32(value,16);
 						}
 						else {
@@ -563,7 +767,7 @@ namespace acn.dms {
 						}
 						break;
 					case acn.dms.TypeCode.tcInt64:
-						if (value.StartsWith("0x") || value.StartsWith("0X")) {
+						if (IsHexadecimalNumber(value)) {
 							result = System.Convert.ToInt64(value,16);
 						}
 						else {
@@ -590,6 +794,11 @@ namespace acn.dms {
 			return result;
 		}
 
+		/// Get the TypeCode as string.
+		public string GetTypeCodeAsString() {
+			return System.Enum.GetName(typeof(acn.dms.TypeCode),Code);
+		}
+
 		/// Get the TypeInfo that corresponds with the specified ACN DDL qualified behavior identifier.
 		/// @param behavior the qualified behavior identifier ('bset:name')
 		/// @return the corresponding TypeInfo
@@ -604,6 +813,11 @@ namespace acn.dms {
 		/// @return the corresponding TypeInfo
 		public static TypeInfo GetTypeInfoByCode(TypeCode code) {
 			return TypeInfoByCode[code];
+		}
+
+		/// Detect a hexadecimal number, C-style.
+		private static bool IsHexadecimalNumber(string value) {
+			return value.StartsWith("0x") || value.StartsWith("0X");
 		}
 	}
 

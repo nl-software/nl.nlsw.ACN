@@ -1,7 +1,7 @@
 #
 # @file acn.CANopen.psm1
 # @copyright Ernst van der Pols, Licensed under the EUPL-1.2-or-later
-# @date 2022-04-06
+# @date 2022-04-15
 #
 # Import and export of CiA CANopen data in ANSI E1.17 Architecture for Control Networks Device Description Language documents.
 #
@@ -857,8 +857,8 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 		# type of artifact
 		$artifactType = "CANopen"
 		$device = $writer.CurrentDocument.Device
-		if ($device.Appliance -ne $appliance) {
-			write-warning "the appliance must be of the device of the writer's current document"
+		if (![object]::ReferenceEquals($appliance,$device.Appliance)) {
+			write-warning "the appliance ($($appliance.id)) must be of the device ($($device.id)) of the writer's current document ($($writer.CurrentDocument.FileInfo))"
 		}
 		# determine the name of the device
 		$name = $device.id
@@ -913,7 +913,7 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 		foreach ($kvp in $list.GetEnumerator()) {
 			$prop = $kvp.Value
 			$coa = [CANopen]::GetAttributes($prop,$defaultAttrs,0)
-			if (![CANopen]::isDataObject($coa.index)) {
+			if (![acn.CANopen.ObjectDictionary]::IsDataObject($coa.index)) {
 				# skip index=0 and type definitions for export
 				continue
 			}
@@ -923,11 +923,11 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 			}
 			write-verbose ("{0,16} {1}" -f $kvp.Key,$prop.id)
 			# register the object in the appropriate list
-			if ([CANopen]::isManufacturerObject($coa.index)) {
+			if ([acn.CANopen.ObjectDictionary]::IsManufacturerObject($coa.index)) {
 				$section = $sections.ManufacturerObjects
 			}
 			else {
-				if ([CANopen]::isMandatoryObject($prop)) {
+				if ([acn.CANopen.ObjectDictionary]::IsMandatoryObject($prop)) {
 					$section = $sections.MandatoryObjects
 				}
 				else {
@@ -978,8 +978,8 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 	static [object] ExportEmotasCDDConfiguration([acn.ddl.Writer]$writer, [string]$path, [acn.ddl.Appliance]$appliance)
 	{
 		$device = $writer.CurrentDocument.Device
-		if ($device.Appliance -ne $appliance) {
-			write-warning "the appliance must be of the device of the writer's current document"
+		if (![object]::ReferenceEquals($appliance,$device.Appliance)) {
+			write-warning "the appliance ($($appliance.id)) must be of the device ($($device.id)) of the writer's current document ($($writer.CurrentDocument.FileInfo))"
 		}
 		$list = [System.Collections.Generic.SortedDictionary[[string],[acn.ddl.Property]]]::new()
 		[CANopen]::CollectProtocolProperties($list,$appliance,[CANopen]::protocolDefinition.CANopen,@{})
@@ -994,12 +994,12 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 		foreach ($kvp in $list.GetEnumerator()) {
 			$prop = $kvp.Value
 			$propId = $prop.id
-			if (!$prop.HasNetworkValue()) {
-				# skip properties without network access
+			if (!$prop.HasNetworkValue() -and !$prop.HasNullValue()) {
+				# skip simple properties without network access
 				continue
 			}
 			$coa = [CANopen]::GetAttributes($prop,$defaultAttrs,0)
-			if (![CANopen]::isObject($coa.index)) {
+			if (![acn.CANopen.ObjectDictionary]::IsObject($coa.index)) {
 				# skip index=0 for export
 				continue
 			}
@@ -1009,6 +1009,10 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 				# determine explicit or implicit MaxSubIndex specification
 				$maxSubIndexProp = $prop.GetPropertyWithBehavior("CANopen.bset:maxSubIndex")
 				if ($maxSubIndexProp) {
+					if (!$maxSubIndexProp.HasNetworkValue()) {
+						# no network access
+						continue;
+					}
 					# get the attributes from the explicit MaxSubIndex
 					$msicoa = [CANopen]::GetAttributes($maxSubIndexProp,$defaultAttrs,0)
 					# verify the MaxSubIndex value
@@ -1020,6 +1024,10 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 					[CANopen]::ExportEmotasCDDObject($writer,$prop,$appliance,$entry,$msicoa)
 				}
 				else {
+					# are there any 'members' with network access?
+					if ($maxSubIndex -le 0) {
+						continue;
+					}
 					# no explicit MaxSubIndex: determine implicit MaxSubIndex attributes
 					$coa.dataType = "acn.dms.bset:type.uint8"
 					$coa.isConstant = $true
@@ -1349,7 +1357,7 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 				write-verbose ("{0,16} {1}: {2}" -f "node",$result.node,$property.id)
 				$defaultAttrs.node = $result.node
 			}
-			if ([CANopen]::isObject($result.index)) {
+			if ([acn.CANopen.ObjectDictionary]::IsObject($result.index)) {
 				$propId = $property.Id
 				[int]$result.nodeID = $defaultAttrs.node
 				# index and subIndex as [int]
@@ -1370,11 +1378,25 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 						[int]$result.subIndex = $index + 1
 					}
 				}
-				if ($property.valuetype -eq [acn.ddl.PropertyValueType]::network) {
-					# determine the data type
+				# determine the data type
+				if ($property.valuetype -ne [acn.ddl.PropertyValueType]::NULL) {
 					$result.dataType = [CANopen]::GetDataType($property)
+				}
+				$result.isConstant = $property.HasConstantValue()
+				$result.DefaultValue = $property.GetPropertyWithBehavior("acnbase.bset:initializer")
+				$result.LimitMin = $property.GetPropertyWithBehavior("acnbase.bset:limitMinInc")
+				$result.LimitMax = $property.GetPropertyWithBehavior("acnbase.bset:limitMaxInc")
+				if ($result.DefaultValue) {
+					$result.DefaultValue = $result.DefaultValue.GetValueString($index)
+				}
+				if ($result.LimitMin) {
+					$result.LimitMin = $result.LimitMin.GetValueString($index)
+				}
+				if ($result.LimitMax) {
+					$result.LimitMax = $result.LimitMax.GetValueString($index)
+				}
+				if ($property.valuetype -eq [acn.ddl.PropertyValueType]::network) {
 					# determine SDO and PDO access
-					$result.isConstant = $property.HasBehavior("acnbase.bset","constant")
 					# determine traditional 'access'
 					if (!$result.access) {
 						# default value of sdo access
@@ -1409,18 +1431,6 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 						"no" { "0"; break }
 						"tr" { "1"; break }
 						default { "0"; break }
-					}
-					$result.DefaultValue = $property.GetPropertyWithBehavior("acnbase.bset:initializer")
-					$result.LimitMin = $property.GetProperty("$propId.Min")
-					$result.LimitMax = $property.GetProperty("$propId.Max")
-					if ($result.DefaultValue) {
-						$result.DefaultValue = $result.DefaultValue.GetValueString($index)
-					}
-					if ($result.LimitMin) {
-						$result.LimitMin = $result.LimitMin.GetValueString($index)
-					}
-					if ($result.LimitMax) {
-						$result.LimitMax = $result.LimitMax.GetValueString($index)
 					}
 				}
 			}
@@ -2003,7 +2013,7 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 			# unique (hierarchical) identifier of the property
 			$pid = $null
 			# determine the parent node of the property
-			if ([CANopen]::isCommunicationObject($object.index))
+			if ([acn.CANopen.ObjectDictionary]::IsCommunicationObject($object.index))
 			{
 				$pg = $canopenGroup
 			}
@@ -2169,56 +2179,6 @@ extern CANopenDataItems const {4}_CANopen_DataItems;
 		}
 	}
 	
-	# Check whether the CANopen Object Dictionary index indicates a CANopen communication profile object
-	# @param $index the object dictionary index
-	# @return $true if the object is a communication profile object, $false otherwise
-	static [bool] isCommunicationObject([int]$index) {
-		return ($index -ge 0x1000) -and ($index -le 0x1FFF)
-	}
-
-	# Check whether the CANopen Object Dictionary index indicates a CANopen data object
-	# @param $index the object dictionary index
-	# @return $true if the object is not 0 or a CANopen type definition, $false otherwise
-	static [bool] isDataObject([int]$index) {
-		return ($index -ge 0x1000)
-	}
-
-	# Check whether the CANopen Object Dictionary index indicates a CANopen data type definition object
-	# @note index 0x0000 is not used
-	# @param $index the object dictionary index
-	# @return $true if the object is ad ata type definition object, $false otherwise
-	static [bool] isDataTypeObject([int]$index) {
-		return ($index -gt 0x0000) -and ($index -le 0x0FFF)
-	}
-
-	# Check whether the property indicates a mandatory CANopen object.
-	# @param $prop the property
-	# @return $true if the object is mandatory, $false otherwise
-	static [bool] isMandatoryObject([acn.ddl.Property]$prop) {
-		return ($prop -and $prop.HasBehavior("CANopen.bset:category.mandatory"))
-	}
-	
-	# Check whether the CANopen Object Dictionary index indicates a manufacturer specific object
-	# @param $index the object dictionary index
-	# @return $true if the object is manufacturer specifc, $false otherwise
-	static [bool] isManufacturerObject([int]$index) {
-		return ($index -ge 0x2000) -and ($index -le 0x5FFF)
-	}
-	
-	# Check whether the CANopen Object Dictionary index indicates a CANopen object.
-	# @param $index the object dictionary index
-	# @return $true if the object is not 0, $false otherwise
-	static [bool] isObject([int]$index) {
-		return ($index -gt 0x0000)
-	}
-
-	# Check whether the CANopen Object Dictionary index indicates a standard profile object
-	# @param $index the object dictionary index
-	# @return $true if the object is standard profile specifc, $false otherwise
-	static [bool] isStandardProfileObject([int]$index) {
-		return ($index -ge 0x6000) -and ($index -le 0x9FFF)
-	}
-
 	# Check mandatory fields and other requirements of the specified EDS object section
 	# @see CiA306-1 Table 7
 	# @param $key the key of the section (with index and optionally subIndex)
@@ -2402,13 +2362,11 @@ function Export-AcnToCANopen {
 			$writer.CurrentDocument = $_
 			try {
 				$device = $writer.CurrentDocument.Device
-				# create the appliance if not present
+				# signal the creation of the appliance if not present
 				if (!$device.Appliance) {
 					write-verbose ("{0,16} {1} {2}" -f "building","appliance",$device.id)
-					$device.Appliance = [acn.ddl.Appliance]::new($device)
 				}
-
-				[CANopen]::ExportCANopenEDS($writer, $Path, $device.Appliance)
+				[CANopen]::ExportCANopenEDS($writer, $Path, $device.GetAppliance())
 
 ##				[CANopen]::ExportCANopenToGDCTranslationTable($writer, $Path, $list)
 			}
@@ -2515,11 +2473,10 @@ function Export-AcnToEmotasCDD {
 				# create the appliance if not present
 				if (!$device.Appliance) {
 					write-verbose ("{0,16} {1} {2}" -f "building","appliance",$device.id)
-					$device.Appliance = [acn.ddl.Appliance]::new($device)
 				}
 
 				# emotas CANopen Device Designer configuration
-				[CANopen]::ExportEmotasCDDConfiguration($writer, $Path, $device.Appliance)
+				[CANopen]::ExportEmotasCDDConfiguration($writer, $Path, $device.GetAppliance())
 			}
 			finally {
 				$writer.CurrentDocument = $null
