@@ -116,7 +116,7 @@ namespace acn.dms {
 
 		/// Get the initial value of the property
 		/// @return the initial value, null if not available
-		public object InitialValue {
+		public virtual string InitialValue {
 			get {
 				if (_InitialValue == null) {
 					acn.ddl.Property initializer = Property.GetPropertyWithBehavior("acnbase.bset:initializer");
@@ -125,6 +125,9 @@ namespace acn.dms {
 					}
 				}
 				return _InitialValue;
+			}
+			protected set {
+				_InitialValue = value;
 			}
 		}
 
@@ -143,6 +146,9 @@ namespace acn.dms {
 				}
 				return _LimitMax;
 			}
+			protected set {
+				_LimitMax = value;
+			}
 		}
 
 		/// Get the minimum value of the property
@@ -156,6 +162,9 @@ namespace acn.dms {
 					}
 				}
 				return _LimitMin;
+			}
+			protected set {
+				_LimitMin = value;
 			}
 		}
 

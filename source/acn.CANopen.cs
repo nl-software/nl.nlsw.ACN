@@ -162,6 +162,7 @@ namespace acn.CANopen {
 	}
 
 	/// The CANopen protocol attributes of a device property.
+	/// Objects of this class represent a CANopen object.
 	public class Protocol : acn.dms.Protocol {
 
 		/// The CANopen protocol definition
@@ -173,6 +174,25 @@ namespace acn.CANopen {
 				{ "access", "rw" },
 				{ "pdo", "no" }
 			});
+
+		/// Get the initial value of the property
+		/// @note "$NODEID+" macros in the initializer are resolved with the actual node ID of the property.
+		/// @return the initial value, null if not available
+		public override string InitialValue {
+			get {
+				if (!string.IsNullOrEmpty(base.InitialValue)) {
+					string macro = "$NODEID+";
+					if (base.InitialValue.StartsWith(macro)) {
+						// get the numerical part of the initial value
+						uint valjoe = System.Convert.ToUInt32(this.DataType.ConvertFromString(base.InitialValue.Substring(macro.Length)));
+						// add the node ID
+						valjoe += this.NodeID;
+						base.InitialValue = valjoe.ToString();
+					}
+				}
+				return base.InitialValue;
+			}
+		}
 
 		/// The node number of the device on the CANopen bus
 		public byte NodeID { get; protected set;}

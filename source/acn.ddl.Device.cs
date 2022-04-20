@@ -89,7 +89,7 @@ using nl.nlsw.Items;
 ///
 ///
 /// @author Ernst van der Pols
-/// @date 2022-04-15
+/// @date 2022-04-19
 /// @pre .NET Standard 2.0
 ///
 namespace acn.ddl {
@@ -1416,6 +1416,23 @@ namespace acn.ddl {
 			return result;
 		}
 
+		/// Get the Document that contains the module with the specified filename.
+		/// @param filename the absolute filename (FileInfo.FullName) of the document to get.
+		/// @return the Document that holds the module, null if not found
+		public Document GetDocumentByFileName(string filename) {
+			if (this.Items != null) {
+				foreach (ItemObject item in this.Items) {
+					Document result = item as Document;
+					if ((result != null) && (result.FileInfo != null)
+						&& (string.CompareOrdinal(result.FileInfo.FullName,filename) == 0))
+					{
+						return result;
+					}
+				}
+			}
+			return null;
+		}
+
 		/// Get the Document that contains the module with the specified name (or UUID).
 		/// @param name the xml:id of the ACN DDL module, or the UUID of the module
 		/// @return the Document that holds the module, null if not found
@@ -1441,7 +1458,36 @@ namespace acn.ddl {
 			return null;
 		}
 
-		/// Get the Document that contains the module with the specified name
+		/// Get or load the Document that contains the module with the specified filename.
+		/// If the document is not loaded already, its file is located via its filename,
+		/// in the current directory, or on the ModulePath.
+		/// @param name the xml:id of the ACN DDL module
+		/// @return the Document that holds the module, null if not found or loaded
+		public Document GetOrLoadDocumentByFileName(string filename) {
+			acn.ddl.Document result = null;
+			System.IO.FileInfo file = new System.IO.FileInfo(filename);
+			if (file.Exists) {
+				result = GetDocumentByFileName(filename);
+			}
+			if (result == null) {
+				// search for the file in the 'current folder' and in the ModuleFolders
+				System.IO.FileInfo fileInfo = FindModuleFile(filename);
+				if (fileInfo != null) {
+					acn.ddl.Reader reader = new acn.ddl.Reader();
+					reader.CurrentItemList = this;
+					reader.TextReader = new System.IO.StreamReader(fileInfo.FullName,reader.DefaultEncoding);
+					result = reader.ImportDocument(reader.TextReader);
+					if (result != null) {
+						result.FileInfo = fileInfo;
+					}
+				}
+			}
+			return result;
+		}
+
+		/// Get or load the Document that contains the module with the specified name.
+		/// If the document is not loaded already, its file is located in the
+		/// current directory, or on the ModulePath.
 		/// @todo add callback to signal import of document to user, if needed
 		///   use in powershell: Register-ObjectEvent `
 		///    -InputObject ([Console]) `
@@ -1453,7 +1499,6 @@ namespace acn.ddl {
 		public Document GetOrLoadDocumentByModuleName(string name) {
 			acn.ddl.Document result = GetDocumentByModuleName(name);
 			if (result == null) {
-				// @todo search ModulePath and filename extension variants
 				string filename = string.Concat(name,this.DefaultFileNameExtension);
 				// search for the file in the 'current folder' and in the ModuleFolders
 				System.IO.FileInfo fileInfo = FindModuleFile(filename);
@@ -1531,7 +1576,7 @@ namespace acn.ddl {
 		public XmlDocument DOMDocument { get; set; }
 
 		/// The file of the document
-		public System.IO.FileSystemInfo FileInfo { get; set; }
+		public System.IO.FileInfo FileInfo { get; set; }
 		
 		/// The root node of the document (ddl:DDL)
 		public DDLDocument RootNode {
